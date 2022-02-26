@@ -1,3 +1,5 @@
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -17,13 +19,15 @@ void print_sentence( char sentence[], char word[] ) {
     char *word_ptr = word;
     char *start = strstr( sentence, word );
     while( start ) {
-        while( sentence_ptr != start) {
-            printf( "%c", (*sentence_ptr) );
+        while( sentence_ptr != start ) {
+            printf( "%c", ( *sentence_ptr ) );
             sentence_ptr++;
         }
-        printf("\033[31m%s\033[m", word);
-        sentence_ptr += strlen( word );
-        start = strstr( sentence_ptr, word );
+        for(int i = 0; i < strlen( word ); i++) {
+            printf( "\033[31m%c\033[m", *sentence_ptr );
+            sentence_ptr++;
+        }
+        start = strcasestr( sentence_ptr, word );
     }
     printf( "%s", sentence_ptr );
 }
@@ -39,7 +43,6 @@ int main() {
 
     printf( "Please enter the string: " );
     fgets( sentence, MAX_LENGTH, stdin );
-    string_tolower( sentence );
 
     printf( "Please enter the keyword: " );
     fgets( key_word, MAX_LENGTH, stdin );
@@ -49,12 +52,11 @@ int main() {
     printf( "Please enter the new word: " );
     fgets( new_word, MAX_LENGTH, stdin );
     new_word[strlen( new_word ) - 1] = 0;
-    string_tolower( new_word );
 
     
     char *start = strstr( sentence_ptr, key_word );
     while( start ) {
-        while( sentence_ptr != start) {
+        while( sentence_ptr != start ) {
             *new_sentence_ptr = *sentence_ptr;
             new_sentence_ptr++;
             sentence_ptr++;
@@ -62,9 +64,9 @@ int main() {
         strcat( new_sentence, new_word );
         new_sentence_ptr += strlen( new_word );
         sentence_ptr += strlen( key_word );
-        start = strstr( sentence_ptr, key_word );
+        start = strcasestr( sentence_ptr, key_word );
     }
-    strcat( new_sentence, sentence_ptr);
+    strcat( new_sentence, sentence_ptr );
 
     printf("Original:\n");
     print_sentence( sentence, key_word );

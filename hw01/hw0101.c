@@ -37,7 +37,7 @@ int main() {
         }
         char reverse_number = reverse( strtol( string_hex_number, NULL, 16 ) );
         if( !isprint( reverse_number ) ){
-            printf( "\nYour reverse input is unprintable.\n" );
+            printf( "\nInvaild Input.\n" );
             exit(0);
         }
         strncat( output, &reverse_number, 1 );
