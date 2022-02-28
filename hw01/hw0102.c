@@ -9,7 +9,7 @@
 
 void string_tolower( char sentence[] ) {
     for( int i = 0; i < strlen(sentence); i++ ) {
-        sentence[i] = tolower( sentence[i] );
+        sentence[i] = tolower(sentence[i]);
     }
     return;
 }
@@ -23,7 +23,7 @@ void print_sentence( char sentence[], char word[] ) {
             printf( "%c", ( *sentence_ptr ) );
             sentence_ptr++;
         }
-        for(int i = 0; i < strlen( word ); i++) {
+        for(int i = 0; i < strlen(word); i++) {
             printf( "\033[31m%c\033[m", *sentence_ptr );
             sentence_ptr++;
         }
@@ -47,11 +47,11 @@ int main() {
     printf( "Please enter the keyword: " );
     fgets( key_word, MAX_LENGTH, stdin );
     key_word[strlen( key_word ) - 1] = 0;
-    string_tolower( key_word );
+    string_tolower(key_word);
 
     printf( "Please enter the new word: " );
     fgets( new_word, MAX_LENGTH, stdin );
-    new_word[strlen( new_word ) - 1] = 0;
+    new_word[strlen(new_word) - 1] = 0;
 
     
     char *start = strstr( sentence_ptr, key_word );
@@ -62,8 +62,8 @@ int main() {
             sentence_ptr++;
         }
         strcat( new_sentence, new_word );
-        new_sentence_ptr += strlen( new_word );
-        sentence_ptr += strlen( key_word );
+        new_sentence_ptr += strlen(new_word);
+        sentence_ptr += strlen(key_word);
         start = strcasestr( sentence_ptr, key_word );
     }
     strcat( new_sentence, sentence_ptr );

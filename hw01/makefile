@@ -4,6 +4,7 @@ all:$(SRC:.c=.o)
 	gcc hw0101.o -o hw0101
 	gcc hw0102.o -o hw0102
 	gcc hw0103.o mystring.o -o hw0103
+	gcc hw0104.o mystring.o -o hw0104
 	make clean
 
 .PHONY : new zip clean cleanexe

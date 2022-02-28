@@ -7,7 +7,7 @@
 
 int main() {     //0         1    
     extern errno;// 123456789 123456789
-    char str[30] = "   -   ylnw  LxUb19SQXg";
+    char str[30] = "   -  0xG ";
     char* endptr1;
     char* endptr2;
     for(int i = 0 ;i <= 36; i++){
@@ -22,10 +22,10 @@ int main() {     //0         1
         else {
             printf("Base: %d\nwrong\n", i);
             printf("%ld\n", mystrtol(str, &endptr2, i));
-            printf("%d\n", endptr2 - str);
+            printf("%ld\n", endptr2 - str);
             printf("%s\n\n", strerror(errno2));
             printf("%ld\n", strtol(str, &endptr1, i));
-            printf("%d\n", endptr1 - str);
+            printf("%ld\n", endptr1 - str);
             printf("%s\n\n", strerror(errno1));
         }
     }
