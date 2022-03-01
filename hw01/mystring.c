@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
+#include "mystring.h"
 
 extern errno;
 

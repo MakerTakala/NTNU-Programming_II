@@ -23,7 +23,7 @@ void print_sentence( char sentence[], char word[] ) {
             printf( "%c", ( *sentence_ptr ) );
             sentence_ptr++;
         }
-        for(int i = 0; i < strlen(word); i++) {
+        for( int i = 0; i < strlen(word); i++ ) {
             printf( "\033[31m%c\033[m", *sentence_ptr );
             sentence_ptr++;
         }
