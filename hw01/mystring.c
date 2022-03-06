@@ -106,10 +106,13 @@ char *mystrstr( const char *haystack , const char *needle ) {
 }
 
 char *mystrtok( char *str, const char *delim ) {
-    if( delim == NULL ) {
+    if( str != NULL && delim == NULL ) {
         return (char*)str;
     }
     static char *start, *tail;
+    if( str == NULL && tail == NULL ) {
+        return NULL;
+    }
     if( str != NULL) {
         start = str;
         tail = str;
@@ -190,16 +193,18 @@ long int mystrtol( const char *nptr, char **endptr , int base ) {
     }
 
     if( !isallowrange( *start, base) ) {
-        if( hadread ) {
-            if( base == 16 ) {
-                *endptr = start - 1;
+        if( endptr != NULL ) {
+            if( hadread ) {
+                if( base == 16 ) {
+                    *endptr = start - 1;
+                }
+                else {
+                    *endptr = start;
+                }
             }
             else {
-                *endptr = start;
+                *endptr = (char*)nptr;
             }
-        }
-        else {
-            *endptr = (char*)nptr;
         }
         return 0;
     }

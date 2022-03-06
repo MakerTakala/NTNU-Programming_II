@@ -91,7 +91,7 @@ int main() {
         printf("NULL\n");
     }
 
-    char test_strtok1[] = "1,,2,,3,,4,,5";
+    char test_strtok1[] = ",,,,1,,2,,3,,4,,5";
     char test_settok1[] = ",";
     printf("strtok:\n");
     char *p1 = strtok(test_strtok1, test_settok1);
@@ -100,7 +100,7 @@ int main() {
         p1 = strtok(NULL, test_settok1);
     }
     
-    char test_strtok2[] = "1,,2,,3,,4,,5";
+    char test_strtok2[] = ",,,,,1,,2,,3,,4,,5";
     char test_settok2[] = ",";
     char *p2 = strtok(test_strtok2, test_settok2);
     while(p2){
