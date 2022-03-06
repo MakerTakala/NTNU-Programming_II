@@ -13,6 +13,9 @@ extern errno;
 //hw0104
 
 char *mystrchr( const char *s, int c ) {
+    if( s == NULL ) {
+        return NULL;
+    }
     int n = strlen(s);
     for( int i = 0; i < n; i++ ) {
         if( *(s + i) == c ) {
@@ -23,6 +26,9 @@ char *mystrchr( const char *s, int c ) {
 }
 
 char *mystrrchr( const char *s, int c ) {
+    if( s == NULL ) {
+        return NULL;
+    }
     int n = strlen(s);
     for( int i = n - 1; i >= 0 ; i-- ) {
         if( *(s + i) == c ) {
@@ -33,6 +39,9 @@ char *mystrrchr( const char *s, int c ) {
 }
 
 size_t mystrspn( const char *s, const char *accept ) {
+    if( s == NULL || accept == NULL ) {
+        return 0;
+    }
     int n = strlen(s), m = strlen(accept);
     for( int i = 0; i < n; i++ ) {
         for( int j = 0; j < n; j++ ) {
@@ -47,6 +56,12 @@ size_t mystrspn( const char *s, const char *accept ) {
     return n;
 }
 size_t mystrcspn( const char *s, const char *reject ) {
+    if( s == NULL ) {
+        return 0;
+    }
+    if( reject == NULL ) {
+        return strlen(s);
+    }
     int n = strlen(s), m = strlen(reject);
     for( int i = 0; i < n; i++ ) {
         for( int j = 0; j < m; j++ ) {
@@ -58,6 +73,9 @@ size_t mystrcspn( const char *s, const char *reject ) {
     return n;
 }
 char *mystrpbrk( const char *s, const char *accept ) {
+    if( s == NULL || accept == NULL ) {
+        return NULL;
+    }
     int n = strlen(s), m = strlen(accept);
     for( int i = 0; i < n; i++ ) {
         for( int j = 0; j < m; j++ ) {
@@ -70,6 +88,9 @@ char *mystrpbrk( const char *s, const char *accept ) {
 }
 
 char *mystrstr( const char *haystack , const char *needle ) {
+    if( haystack == NULL || needle == NULL ) {
+        return NULL;
+    }
     int n = strlen(haystack), m = strlen(needle);
     for( int i = 0; i <= (n - m); i++ ) {
         for( int j = 0; j < m; j++ ) {
@@ -85,6 +106,9 @@ char *mystrstr( const char *haystack , const char *needle ) {
 }
 
 char *mystrtok( char *str, const char *delim ) {
+    if( delim == NULL ) {
+        return (char*)str;
+    }
     static char *start, *tail;
     if( str != NULL) {
         start = str;
