@@ -106,30 +106,29 @@ char *mystrstr( const char *haystack , const char *needle ) {
 }
 
 char *mystrtok( char *str, const char *delim ) {
-    if( str != NULL && delim == NULL ) {
-        return (char*)str;
+    static char* tmp;
+    char *start = (char*)str, *tail;
+    if( str == NULL ) {
+        start = tmp;
     }
-    static char *start, *tail;
-    if( str == NULL && tail == NULL ) {
+    if( *start == 0 ) {
+        tmp = start;
         return NULL;
     }
-    if( str != NULL) {
-        start = str;
-        tail = str;
+    start += mystrspn(start, delim);
+    if( *start == 0 ) {
+        tmp = start;
+        return NULL;
     }
-    start = tail;
-    int n = strlen(delim);
-    while( *tail != 0 ) {
-        for( int i = 0; i < n; i++ ) {
-            if( *tail == *(delim + i) ) {
-                *tail = 0;
-                tail++;
-                return start;
-            }
-        }
-        tail++;
+
+    tail = start + mystrcspn(start, delim);
+    if( *tail == 0 ) {
+        tmp = tail;
+        return start;
     }
-    return NULL;
+    *tail = 0;
+    tmp = tail + 1;
+    return start;
 }
 
 

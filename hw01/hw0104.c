@@ -102,10 +102,10 @@ int main() {
     
     char test_strtok2[] = ",,,,,1,,2,,3,,4,,5";
     char test_settok2[] = ",";
-    char *p2 = strtok(test_strtok2, test_settok2);
+    char *p2 = mystrtok(test_strtok2, test_settok2);
     while(p2){
         printf("%s\n", p2);
-        p2 = strtok(NULL, test_settok2);
+        p2 = mystrtok(NULL, test_settok2);
     }
     return 0;
 }
