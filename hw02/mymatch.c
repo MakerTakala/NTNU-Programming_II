@@ -49,13 +49,19 @@ int mymatch( char ***pppList , const char *pStr, const char *pPattern ) {
     char *str = calloc( strlen(pStr), sizeof(char) );
     str = strcpy( str, pStr );
     *pppList = calloc( substr_size( str ), sizeof(char*) );
-    char *str_start = strtok( str, " " );
-    while( str_start ) {
-        if( match( str_start, (char*)pPattern ) ) {
-            *( *pppList + counter ) = str_start;
+    char *split = strstr( str, " " );
+    while( split ) {
+        *split = 0;
+        if( match( str, (char*)pPattern ) ) {
+            *( *pppList + counter ) = str;
             counter++;
         }
-        str_start = strtok( NULL, " " );
+        str += strlen(str) + 1;
+        split = strstr( str, " " );
+    }
+    if( match( str, (char*)pPattern ) ) {
+        *( *pppList + counter ) = str;
+        counter++;
     }
     *pppList = realloc( *pppList, counter * sizeof(char*) );
     return counter;
