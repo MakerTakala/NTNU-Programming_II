@@ -47,6 +47,8 @@ int myvector_area( double *pArea , const sVector *pB, const sVector *pC );
 // If error , return -1; otherwise , return 0;
 int myvector_cvp( double *pX, double *pY, const double *pTx, const double *pTy, const sVector *pA, const sVector *pB );
 
-void CtoP( sVector* pvector );
+sVector CtoP( sVector* pvector );
 
-void PtoC( sVector* pvecotr );
+sVector PtoC( sVector* pvecotr );
+
+void fix_polar_angle( sVector* pvector );

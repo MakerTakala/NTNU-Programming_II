@@ -4,7 +4,7 @@
 
 int main() {
     char **ppList;
-    char *pStr = "ae ace  ache  aaae baaae apple";
+    char *pStr = "";
     char *pPattern = "*";
     
     uint64_t coutner = mymatch( &ppList, pStr, pPattern );

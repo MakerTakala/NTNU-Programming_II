@@ -1,23 +1,23 @@
-# Homework01 4104702S 王重鈞
+# Homework02 4104702S 王重鈞
 
 Use "make" to compile all program file
 
-## 1.1 Another Character Encoding
+## 2.1 Wildcard Matching
 ---
 Input a string, the program will seem two char as an hex number one by one, then exchange it to binary number and reverse it.
 Output the char accroding to reverse number. The string should be end with "00". If there's any invaild input, porgram will print error.
 
-## 1.2 Replacement
+## 2.2 IEEE 754
 ---
 Input a string, a keyword and a newword, program will repalce keyword in the string to newword.
 Then output the original string and new string, the keyword and newword will be marked with color.
 
-## 1.3 My String Library v1
+## 2.3 Puella Magi Madoka Magica
 ---
 mystrtol - convert a string to a long integer.  
 long int mystrtol(const char *nptr, char **endptr , int base);
 
-## 1.4 My String Library v2
+## 2.4 Mixed Fraction Arithmetic
 ---
 mystrchr - locate character in string and return the first occurrence of the char c in s string.  
 char *mystrchr(const char *s, int c);
@@ -40,7 +40,7 @@ char *mystrstr(const char *haystack , const char *needle);
 strtok - extract tokens from strings and return a pointer to the next token, or NULL if there are no more tokens.  
 char *mystrtok(char *str, const char *delim);
 
-## 1.5 Split
+## 2.5 Vector
 ---
 mystrsplit - split the string and return a 2D vector with splited string.  
 int mystrsplit(char ***pppList , int *pCounter , const char *pStr, const char *pSeparator);

@@ -1,12 +1,16 @@
-#pragma once
-
 #include "madoka.h"
+#include <stdio.h>
 
+int Entity_is_dead(void *this) {
+}
 Entity *Entity_ctor(Entity *this) {
-    
+    if( this == NULL ) {
+        return NULL;
+    }
+    Entity *pEntity = malloc( sizeof(Entity) );
+    pEntity->hp = 100;
 }
 void Entity_dtor(Entity *this);
-int Entity_is_dead(void *this);
 
 Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish);
 void Shoujo_dtor(Shoujo *this);

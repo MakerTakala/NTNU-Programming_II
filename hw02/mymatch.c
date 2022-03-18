@@ -45,6 +45,9 @@ uint16_t substr_size( char *str ) {
 }
 
 int mymatch( char ***pppList , const char *pStr, const char *pPattern ) {
+    if( pppList == NULL || pStr == NULL || pPattern == NULL || *pPattern == 0) {
+        return -1;
+    }
     uint16_t counter = 0;
     char *str = calloc( strlen(pStr), sizeof(char) );
     str = strcpy( str, pStr );
