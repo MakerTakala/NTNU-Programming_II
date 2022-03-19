@@ -1,6 +1,8 @@
 {
     "C_Cpp.errorSquiggles": "Disabled",
     "files.associations": {
-        "madoka.h": "c"
+        "madoka.h": "c",
+        "stdint.h": "c",
+        "fraction_arithmetic.h": "c"
     }
 }

@@ -10,7 +10,7 @@ int main() {
     uint64_t coutner = mymatch( &ppList, pStr, pPattern );
     
     printf("counter: %lu\n", coutner);
-    for(int i = 0; i < coutner; i++) {
+    for( int i = 0; i < coutner; i++ ) {
         printf("%d: %s\n", i + 1, *(ppList + i));
     }
     

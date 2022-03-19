@@ -1,24 +1,80 @@
 #include "madoka.h"
 #include <stdio.h>
 
-int Entity_is_dead(void *this) {
-}
+
 Entity *Entity_ctor(Entity *this) {
     if( this == NULL ) {
         return NULL;
     }
-    Entity *pEntity = malloc( sizeof(Entity) );
-    pEntity->hp = 100;
+    this->hp = 100;
+    this->is_dead = Entity_is_dead;
+    return this;
 }
-void Entity_dtor(Entity *this);
+void Entity_dtor(Entity *this) {
+    if( this == NULL ) {
+        return;
+    }
+    free(this);
+    return;
+}
+int Entity_is_dead(void *this){
+    if( this == NULL ) {
+        return -1;
+    }
+    return ((Entity*)this)->hp <= 0;
+}
 
-Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish);
-void Shoujo_dtor(Shoujo *this);
-int Shoujo_is_despair(void *this);
-void Shoujo_do_wish(void *this);
-void Shoujo_despair(void *this);
+Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
+    if(this == NULL || name == NULL || wish == NULL) {
+        return NULL;
+    }
+    Entity_ctor( &(this->base) );
+    this->name = (char*)name;
+    this->wish = (char*)wish;
+    this->kimoji = 100;
+    this->is_dead = Entity_is_dead;
+    this->is_despair = Shoujo_is_despair;
+    this->do_wish = Shoujo_do_wish;
+    this->despair = Shoujo_despair;
+    return this;
+}
+void Shoujo_dtor(Shoujo *this) {
+    if( this == NULL ) {
+        return;
+    }
+    free(this);
+    return;
+}
+int Shoujo_is_despair(void *this) {
+    if( this == NULL ) {
+        return -1;
+    }
+    return ((Shoujo*)this)->kimoji <= -100;
+}
+void Shoujo_do_wish(void *this) {
+    if( this == NULL ) {
+        return;
+    }
+    printf("wish\n");
+    return;
+}
+void Shoujo_despair(void *this) {
+    if( this == NULL ) {
+        return;
+    }
+    ((Shoujo*)this)->kimoji = 0;
+    return;
+}
 
-Mahoushoujo *Mahoushoujo_ctor(Mahoushoujo *this, const char *name, const char *wish, Skill skill);
+Mahoushoujo *Mahoushoujo_ctor(Mahoushoujo *this, const char *name, const char *wish, Skill skill) {
+    if( this == NULL || name == NULL || skill == NULL ) {
+        return NULL;
+    }
+    Shoujo_ctor( &(this->base), name, wish );
+    ((Entity*)this)->hp *= 3;
+    this->atk = 100;
+    this->is_dead = Entity_is_dead;
+}
 void Mahoushoujo_dtor(Mahoushoujo *this);
 void Mahoushoujo_do_wish(void *this);
 void Mahoushoujo_attack(Mahoushoujo *this, void *enemy);

@@ -52,3 +52,5 @@ sVector CtoP( sVector* pvector );
 sVector PtoC( sVector* pvecotr );
 
 void fix_polar_angle( sVector* pvector );
+
+double get_distance( double x1, double y1, double x2, double y2 );

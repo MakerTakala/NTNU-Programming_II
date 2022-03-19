@@ -16,13 +16,13 @@ int main() {
 
     printf("Sign: %d\n", bit_compare( 63, bit ) );
     printf("Exponent: ");
-    for(int i = 62; i >= 52; i--) {
+    for( int i = 62; i >= 52; i-- ) {
         exponent |= ( bit_compare( i, bit ) << (i - 52) );
         printf("%d", bit_compare( i, bit ) );
     }
     printf("\n");
     printf("Fraction: ");
-    for(int i = 51; i >= 0; i--) {
+    for( int i = 51; i >= 0; i-- ) {
         printf("%d", bit_compare( i, bit ));
     }
     printf("\n");
@@ -31,7 +31,7 @@ int main() {
     printf("(-1)^%d", bit_compare( 63, bit ) );
     printf(" * ");
     printf("(1");
-    for(int i = 51; i >= 0; i--) {
+    for( int i = 51; i >= 0; i-- ) {
         if( bit_compare( i, bit ) ) {
             printf(" + 2^%d", i - 52);
         }
