@@ -3,31 +3,19 @@
 
 
 Entity *Entity_ctor(Entity *this) {
-    if( this == NULL ) {
-        return NULL;
-    }
     this->hp = 100;
     this->is_dead = Entity_is_dead;
     return this;
 }
 void Entity_dtor(Entity *this) {
-    if( this == NULL ) {
-        return;
-    }
     free(this);
     return;
 }
 int Entity_is_dead(void *this){
-    if( this == NULL ) {
-        return -1;
-    }
     return ((Entity*)this)->hp <= 0;
 }
 
 Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
-    if(this == NULL || name == NULL || wish == NULL) {
-        return NULL;
-    }
     Entity_ctor( &(this->base) );
     this->name = (char*)name;
     this->wish = (char*)wish;
@@ -39,56 +27,96 @@ Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
     return this;
 }
 void Shoujo_dtor(Shoujo *this) {
-    if( this == NULL ) {
-        return;
-    }
+    Entity_dtor( &(this->base) );
     free(this);
     return;
 }
 int Shoujo_is_despair(void *this) {
-    if( this == NULL ) {
-        return -1;
-    }
     return ((Shoujo*)this)->kimoji <= -100;
 }
 void Shoujo_do_wish(void *this) {
-    if( this == NULL ) {
-        return;
-    }
     printf("wish\n");
     return;
 }
 void Shoujo_despair(void *this) {
-    if( this == NULL ) {
-        return;
-    }
     ((Shoujo*)this)->kimoji = 0;
     return;
 }
 
 Mahoushoujo *Mahoushoujo_ctor(Mahoushoujo *this, const char *name, const char *wish, Skill skill) {
-    if( this == NULL || name == NULL || skill == NULL ) {
-        return NULL;
-    }
     Shoujo_ctor( &(this->base), name, wish );
-    ((Entity*)this)->hp *= 3;
+    this->base.base.hp *= 3;
     this->atk = 100;
     this->is_dead = Entity_is_dead;
+    this->do_wish = Mahoushoujo_do_wish;
+    this->attack = Mahoushoujo_attack;
+    this->skill = skill;
+    return this;
 }
-void Mahoushoujo_dtor(Mahoushoujo *this);
-void Mahoushoujo_do_wish(void *this);
-void Mahoushoujo_attack(Mahoushoujo *this, void *enemy);
-void Mahoushoujo_despair(void *this);
+void Mahoushoujo_dtor(Mahoushoujo *this){
+    Shoujo_dtor( &(this->base) );
+    free(this);
+    return;
+}
+void Mahoushoujo_do_wish(void *this) {
+    ((Shoujo*)this)->do_wish(this);
+    printf("But nothing is good.\n");
+    ((Shoujo*)this)->kimoji -= 10;
+    return;
+}
+void Mahoushoujo_attack(Mahoushoujo *this, Entity *enemy) {
+    enemy->hp -= (this->atk);
+    return;
+}
+void Mahoushoujo_despair(void *this) {
+    printf("Watashii de, hondo baga\n");
+    return;
+}
 
-Majo *Majo_ctor(Majo *this, const char *name, const char *wish);
-void Majo_dtor(Majo *this);
-void Majo_attack(Majo *this, void *enemy);
-void Majo_kekkai(Majo *this, Shoujo *sj);
-void Majo_despair(void *this);
+Majo *Majo_ctor(Majo *this, const char *name, const char *wish) {
+    Shoujo_ctor( &(this->base), name, wish );
+    this->base.base.hp *= 50;
+    this->atk = 30;
+    this->is_dead = Entity_is_dead;
+    this->attack = Majo_attack;
+    this->kekkai = Majo_kekkai;
+    return this;
+}
+void Majo_dtor(Majo *this) {
+    Shoujo_dtor( &(this->base) );
+    free(this);
+    return;
+}
+void Majo_attack(Majo *this, Entity *enemy) {
+    enemy->hp -= (this->atk);
+    return;
+}
+void Majo_kekkai(Majo *this, Shoujo *sj) {
+    sj->kimoji -= 100;
+    return;
+}
+void Majo_despair(void *this) {
+    return;
+}
 
-Majo *mhsj_to_mj(Mahoushoujo *mhsj);
-
-void Madoka_skill(void *this, void *target);
-void Homura_skill(void *this, void *target);
-void Sayaka_skill(void *this, void *target);
-void Kyoko_skill(void *this, void *target);
+void Madoka_skill(void *this, void *target) {
+    printf("Madoka become god, end.\n");
+    exit(0);
+    return;
+}
+void Homura_skill(void *this, void *target) {
+    if( ((Entity*)this)->hp < 50 ) {
+        printf("This round is hopeless, Homura go to next round.\n");
+        exit(0);
+    }
+    return;
+}
+void Sayaka_skill(void *this, void *target) {
+    ((Entity*)this)->hp += 30;
+    ((Shoujo*)this)->kimoji += 30;
+    return;
+}
+void Kyoko_skill(void *this, void *target) {
+    ((Entity*)this)->hp = 0;
+    ((Entity*)target)->hp = 0;
+}

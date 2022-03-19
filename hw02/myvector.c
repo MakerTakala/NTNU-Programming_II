@@ -21,7 +21,7 @@ int myvector_set( sVector *pVector , uint8_t type, double a, double b ) {
     }
     pVector->type = type;
     pVector->data.c.x = a;
-    pVector->data.c.x = b;
+    pVector->data.c.y = b;
     fix_polar_angle(pVector);
     return 0;
 }
@@ -33,11 +33,11 @@ int myvector_print( const sVector *pVector , uint8_t type ) {
     sVector tmp;
     if( type == 1 ) {
         tmp = PtoC( (sVector*)pVector );
-        printf( "(%lf,%lf)", tmp.data.c.x, tmp.data.c.y );
+        printf( "(%lf,%lf)\n", tmp.data.c.x, tmp.data.c.y );
     }
     if( type == 2 ) {
         tmp = CtoP( (sVector*)pVector );
-        printf( "(%lf,%lf-pi)", tmp.data.p.distance, tmp.data.p.angle );
+        printf( "(%lf,%lf-pi)\n", tmp.data.p.distance, tmp.data.p.angle );
     }
     return 0;
 }
@@ -72,8 +72,8 @@ int myvector_area( double *pArea , const sVector *pB, const sVector *pC ) {
     }
     sVector tmp_pB = PtoC( (sVector*)pB ), tmp_pC = PtoC( (sVector*)pC );
     long double x1 = tmp_pB.data.c.x, x2 = tmp_pC.data.c.x;
-    long double y1 = tmp_pC.data.c.y, y2 = tmp_pC.data.c.y;
-    *pArea = 0.5 * (x1 * y2 - x2 * y1);
+    long double y1 = tmp_pB.data.c.y, y2 = tmp_pC.data.c.y;
+    *pArea = 0.5 * abs(x1 * y2 - x2 * y1);
     return 0;
 }
 
@@ -82,15 +82,17 @@ int myvector_cvp( double *pX, double *pY, const double *pTx, const double *pTy, 
         return -1;
     }
     sVector tmp_pA = PtoC( (sVector*)pA ), tmp_pB = PtoC( (sVector*)pB );
-    uint64_t x_edge = (uint64_t)( fmax( abs( *pTx / pA->data.c.x ), abs( *pTx / pB->data.c.x ) ) ) + 1;
-    uint64_t y_edge = (uint64_t)( fmax( abs( *pTy / pA->data.c.y ), abs( *pTy / pB->data.c.y ) ) ) + 1;
-
+    int64_t x_edge = (int64_t)( fmax( abs( *pTx / pA->data.c.x ), abs( *pTx / pB->data.c.x ) ) ) + 1;
+    int64_t y_edge = (int64_t)( fmax( abs( *pTy / pA->data.c.y ), abs( *pTy / pB->data.c.y ) ) ) + 1;
+    printf("x_edge:%lu y_edge:%lu\n", x_edge, y_edge);
     double cloest_distance = DBL_MAX;
     for( int64_t m = (-1) * x_edge; m <= x_edge; m++ ){
         for( int64_t n = (-1) * y_edge; n <= y_edge; n++ ) {
             double cur_x = tmp_pA.data.c.x * m + tmp_pB.data.c.x * n;
             double cur_y = tmp_pA.data.c.y * m + tmp_pB.data.c.y * n;
+            printf("m:%ld n:%ld cur_x:%lf cur_y:%lf\n", m, n, cur_x, cur_y);
             double cur_distance = get_distance( *pTx, *pTy, cur_x, cur_y );
+            printf("%lf\n", cur_distance);
             if( cur_distance < cloest_distance ) {
                 cloest_distance = cur_distance;
                 *pX = cur_x;
@@ -107,7 +109,7 @@ sVector CtoP( sVector *pvector ) {
         tmp.type = 2;
         double x = tmp.data.c.x, y = tmp.data.c.y;
         tmp.data.p.distance = sqrt( x * x + y * y );
-        tmp.data.p.angle = atan2( y ,x ) + M_PI;
+        tmp.data.p.angle = atan2( y ,x );
         fix_polar_angle(&tmp);
     }
     return tmp;
@@ -126,14 +128,14 @@ sVector PtoC( sVector *pvector ) {
 
 void fix_polar_angle( sVector* pvector ) {
     if( pvector->type == 2 ) {
-        if( pvector->data.p.angle > 180 ) {
-            while( pvector->data.p.angle > 180 ) {
-                pvector->data.p.angle -= 180;
+        if( pvector->data.p.angle > 2 * M_PI ) {
+            while( pvector->data.p.angle > 2 * M_PI ) {
+                pvector->data.p.angle -= 2 * M_PI;
             }
         }
         if( pvector->data.p.angle < 0 ) {
             while( pvector->data.p.angle < 0 ) {
-                pvector->data.p.angle += 180;
+                pvector->data.p.angle += 2 * M_PI;
             }
         }
     }
