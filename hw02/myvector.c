@@ -16,7 +16,7 @@ int myvector_set( sVector *pVector , uint8_t type, double a, double b ) {
     if( pVector == NULL || ( type != 1  && type != 2 ) ) {
         return -1;
     }
-    if( type  == 2 && a < 0 ) {
+    if( type  == 2 && ( a < 0 || b < 0 || 2 * M_PI <= b ) ) {
         return -1;
     }
     pVector->type = type;

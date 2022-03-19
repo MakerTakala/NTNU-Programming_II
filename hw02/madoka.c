@@ -76,7 +76,7 @@ void Mahoushoujo_despair(void *this) {
 Majo *Majo_ctor(Majo *this, const char *name, const char *wish) {
     Shoujo_ctor( &(this->base), name, wish );
     this->base.base.hp *= 50;
-    this->atk = 30;
+    this->atk = 10;
     this->is_dead = Entity_is_dead;
     this->attack = Majo_attack;
     this->kekkai = Majo_kekkai;
