@@ -12,7 +12,6 @@ int main() {
     scanf("%lf", &input);
     uint64_t *bit = (uint64_t*)&input;
     uint16_t exponent = 0;
-    printf("%lX\n", *bit);
 
     printf("Sign: %d\n", bit_compare( 63, bit ) );
     printf("Exponent: ");
