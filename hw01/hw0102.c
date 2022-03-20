@@ -5,7 +5,7 @@
 #include <string.h>
 #include <ctype.h>
  
-#define MAX_LENGTH 4096
+#define MAX_LENGTH 4097
 
 void string_tolower( char sentence[] ) {
     for( int i = 0; i < strlen(sentence); i++ ) {
@@ -42,15 +42,15 @@ int main() {
 
 
     printf( "Please enter the string: " );
-    fgets( sentence, MAX_LENGTH, stdin );
+    fgets( sentence, MAX_LENGTH - 1, stdin );
 
     printf( "Please enter the keyword: " );
-    fgets( key_word, MAX_LENGTH, stdin );
+    fgets( key_word, MAX_LENGTH - 1, stdin );
     key_word[strlen( key_word ) - 1] = 0;
     string_tolower(key_word);
 
     printf( "Please enter the new word: " );
-    fgets( new_word, MAX_LENGTH, stdin );
+    fgets( new_word, MAX_LENGTH - 1, stdin );
     new_word[strlen(new_word) - 1] = 0;
 
     

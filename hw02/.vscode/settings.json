@@ -3,6 +3,7 @@
     "files.associations": {
         "madoka.h": "c",
         "stdint.h": "c",
-        "fraction_arithmetic.h": "c"
+        "fraction_arithmetic.h": "c",
+        "stdio.h": "c"
     }
 }
