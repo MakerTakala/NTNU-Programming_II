@@ -7,6 +7,7 @@
 
 int main() {
     char str[4097] = {0};
+    printf("Q: ");
     fgets( str, 4096, stdin );
     str[ strlen(str) - 1 ] = 0;
     char *cur = str;
@@ -66,10 +67,10 @@ int main() {
     }
     sMixedNumber top = sMixedNumber_stack_top( &number_stack );
     if( abs( top.upper ) >= abs( top.lower ) ) {
-        printf( "%ld\\frac{%ld}{%ld}\n", top.upper / top.lower, abs(top.upper) % top.lower, top.lower );
+        printf( "A: %ld\\frac{%ld}{%ld}\n", top.upper / top.lower, abs(top.upper) % top.lower, top.lower );
     }
     else{
-        printf( "\\frac{%ld}{%ld}\n", top.upper, top.lower );
+        printf( "A: \\frac{%ld}{%ld}\n", top.upper, top.lower );
     }
 
     return 0;
