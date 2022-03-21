@@ -1,5 +1,6 @@
 #include "madoka.h"
 #include <stdio.h>
+#include <string.h>
 
 
 Entity *Entity_ctor(Entity *this) {
@@ -8,7 +9,6 @@ Entity *Entity_ctor(Entity *this) {
     return this;
 }
 void Entity_dtor(Entity *this) {
-    free(this);
     return;
 }
 int Entity_is_dead(void *this){
@@ -17,8 +17,10 @@ int Entity_is_dead(void *this){
 
 Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
     Entity_ctor( &(this->base) );
-    this->name = (char*)name;
-    this->wish = (char*)wish;
+    this->name = malloc(strlen(name) + 1);
+    strcpy(this->name, name);
+    this->wish = malloc(strlen(wish) + 1);
+    strcpy(this->wish, wish);
     this->kimoji = 100;
     this->is_dead = Entity_is_dead;
     this->is_despair = Shoujo_is_despair;
@@ -28,7 +30,8 @@ Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
 }
 void Shoujo_dtor(Shoujo *this) {
     Entity_dtor( &(this->base) );
-    free(this);
+    free( this->name );
+    free( this->wish );
     return;
 }
 int Shoujo_is_despair(void *this) {
@@ -55,7 +58,6 @@ Mahoushoujo *Mahoushoujo_ctor(Mahoushoujo *this, const char *name, const char *w
 }
 void Mahoushoujo_dtor(Mahoushoujo *this){
     Shoujo_dtor( &(this->base) );
-    free(this);
     return;
 }
 void Mahoushoujo_do_wish(void *this) {
@@ -84,7 +86,6 @@ Majo *Majo_ctor(Majo *this, const char *name, const char *wish) {
 }
 void Majo_dtor(Majo *this) {
     Shoujo_dtor( &(this->base) );
-    free(this);
     return;
 }
 void Majo_attack(Majo *this, Entity *enemy) {

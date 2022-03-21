@@ -11,8 +11,8 @@ int main() {
     str[ strlen(str) - 1 ] = 0;
     char *cur = str;
 
-    _sMixedNumber_stack number_stack = { -1, {-1} };
-    _char_stack oper_stack = { -1, {-1} };
+    _sMixedNumber_stack number_stack = { -1, {0} };
+    _char_stack oper_stack = { -1, {0} };
 
     while( *cur != 0 ) {
         sMixedNumber num_number = { .upper = 0, .lower = 1 };
@@ -48,29 +48,23 @@ int main() {
             num_number.upper = tmp_int * num_number.lower - num_number.upper;
         }
         sMixedNumber_stack_push( &number_stack, num_number );
-        // number has been dealed
 
+        // number has been dealed
+        sMixedNumber top = sMixedNumber_stack_top( &number_stack );
         if( *cur == 0 ) break;
 
-        if( operator_priority( char_stack_top( &oper_stack ) ) < operator_priority( *cur ) ) {
-            char_stack_push( &oper_stack, *cur );
+        while( !char_stack_empty( &oper_stack ) && operator_priority( char_stack_top( &oper_stack ) ) >= operator_priority( *cur ) ) {
+            sMixedNumber_stack_push( &number_stack, calculate( &oper_stack, &number_stack ) );
         }
-        else {
-            while( !char_stack_empty( &oper_stack ) && operator_priority( char_stack_top( &oper_stack ) ) >= operator_priority( *cur ) ) {
-                sMixedNumber_stack_push( &number_stack, calculate( &oper_stack, &number_stack ) );
-            }
-        }
+
+        char_stack_push( &oper_stack, *cur );
         cur++;
     }
 
-    sMixedNumber top;
     while( !char_stack_empty( &oper_stack ) ) {
-        top = sMixedNumber_stack_top( &number_stack );
         sMixedNumber_stack_push( &number_stack, calculate( &oper_stack, &number_stack ) );
     }
-    top = sMixedNumber_stack_top( &number_stack );
-    fixMixedNumber( &top );
-
+    sMixedNumber top = sMixedNumber_stack_top( &number_stack );
     if( abs( top.upper ) >= abs( top.lower ) ) {
         printf( "%ld\\frac{%ld}{%ld}\n", top.upper / top.lower, abs(top.upper) % top.lower, top.lower );
     }
