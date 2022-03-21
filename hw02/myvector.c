@@ -108,25 +108,37 @@ int myvector_cvp( double *pX, double *pY, const double *pTx, const double *pTy, 
     if( pX == NULL || pY == NULL || pTx == NULL || pTy == NULL || pA == NULL || pB == NULL ) {
         return -1;
     }
+    if( pA->type != 1 && pA->type != 2 ) {
+        return -1;
+    }
+    if( pB->type != 1 && pB->type != 2 ) {
+        return -1;
+    }
+
     sVector tmp_pA = PtoC( (sVector*)pA ), tmp_pB = PtoC( (sVector*)pB );
-    int64_t x_edge = (int64_t)( fmax( abs( *pTx / pA->data.c.x ), abs( *pTx / pB->data.c.x ) ) ) + 1;
-    int64_t y_edge = (int64_t)( fmax( abs( *pTy / pA->data.c.y ), abs( *pTy / pB->data.c.y ) ) ) + 1;
-    printf("x_edge:%lu y_edge:%lu\n", x_edge, y_edge);
-    double cloest_distance = DBL_MAX;
-    for( int64_t m = (-1) * x_edge; m <= x_edge; m++ ){
-        for( int64_t n = (-1) * y_edge; n <= y_edge; n++ ) {
-            double cur_x = tmp_pA.data.c.x * m + tmp_pB.data.c.x * n;
-            double cur_y = tmp_pA.data.c.y * m + tmp_pB.data.c.y * n;
-            printf("m:%ld n:%ld cur_x:%lf cur_y:%lf\n", m, n, cur_x, cur_y);
-            double cur_distance = get_distance( *pTx, *pTy, cur_x, cur_y );
-            printf("%lf\n", cur_distance);
-            if( cur_distance < cloest_distance ) {
-                cloest_distance = cur_distance;
-                *pX = cur_x;
-                *pY = cur_y;
+
+    double AX = tmp_pA.data.c.x, AY = tmp_pA.data.c.y, BX = tmp_pB.data.c.x, BY = tmp_pB.data.c.y;
+    double A = AX * AX + AY * AY, B = AX * BX + AY * BY, C = AX * (*pTx) + AY * (*pTy);
+    double D = AX * BX + AY * BY, E = BX * BX + BY * BY, F = BX * (*pTx) + BY * (*pTy);
+    
+    int64_t VX = ( C * E - B * F ) / ( A * E - B * D );
+    int64_t VY = ( A * F - C * D ) / ( A * E - B * D );
+
+    double cloest_distance = DBL_MAX, cloest_x = 0, cloest_y = 0;
+
+    for( int i = -1; i <= 1; i++ ) {
+        for( int j = -1; j <= 1; j++ ) {
+            double distance = get_distance( *pTx, *pTy, ( VX + i ) * AX + ( VY + i ) * BX, ( VY + i ) * AY + ( VY + i ) * BY );
+            if( distance < cloest_distance ) {
+                cloest_x = ( VX + i ) * AX + ( VY + i ) * BX;
+                cloest_y = ( VY + i ) * AY + ( VY + i ) * BY;
+                cloest_distance = distance;
             }
         }
     }
+
+    *pX = cloest_x;
+    *pY = cloest_y;
     return 0;
 }
 

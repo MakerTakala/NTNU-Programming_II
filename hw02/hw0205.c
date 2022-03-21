@@ -5,11 +5,13 @@
 int main() {
     sVector *v1 = myvector_init();
     sVector *v2 = myvector_init();
-    myvector_set( v1, 1, 1.0, -1.0 );
-    myvector_set( v2, 1, 1.0, 1.0 );
+    myvector_set( v1, 1, 1, 1 );
+    myvector_set( v2, 1, 1, -1 );
 
     sVector *v3 = myvector_init();
     myvector_add(v3, v1, v2);
+    printf("ADD:  X:%lf Y:%lf\n", v3->data.c.x, v2->data.c.y);
+
 
     double A = 0;
     myvector_inner_product(&A, v1, v2);
