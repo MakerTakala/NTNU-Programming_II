@@ -8,7 +8,7 @@
 bool match( char *str, char *pattern ) {
     char *last_star = NULL;
     char *last_match = str;
-    while( *str  ) {
+    while( *str ) {
         if( *pattern == '?' || *str == *pattern ) {
             str++;
             pattern++;

@@ -66,7 +66,10 @@ int main() {
         sMixedNumber_stack_push( &number_stack, calculate( &oper_stack, &number_stack ) );
     }
     sMixedNumber top = sMixedNumber_stack_top( &number_stack );
-    if( abs( top.upper ) >= abs( top.lower ) ) {
+    if( top.lower == 1 ) {
+        printf( "A: %ld\n", top.upper );
+    }
+    else if( abs( top.upper ) >= abs( top.lower ) ) {
         printf( "A: %ld\\frac{%ld}{%ld}\n", top.upper / top.lower, abs(top.upper) % top.lower, top.lower );
     }
     else{

@@ -64,6 +64,8 @@ void Majo_attack(Majo *this, Entity *enemy);
 void Majo_kekkai(Majo *this, Shoujo *sj);
 void Majo_despair(void *this);
 
+Majo *mhsj_to_mj(Mahoushoujo *mhsj);
+
 void Madoka_skill(void *this, void *target);
 void Homura_skill(void *this, void *target);
 void Sayaka_skill(void *this, void *target);

@@ -18,9 +18,9 @@ int Entity_is_dead(void *this){
 Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
     Entity_ctor( &(this->base) );
     this->name = malloc(strlen(name) + 1);
-    strcpy(this->name, name);
+    strcpy( this->name, name );
     this->wish = malloc(strlen(wish) + 1);
-    strcpy(this->wish, wish);
+    strcpy( this->wish, wish );
     this->kimoji = 100;
     this->is_dead = Entity_is_dead;
     this->is_despair = Shoujo_is_despair;
@@ -29,20 +29,20 @@ Shoujo *Shoujo_ctor(Shoujo *this, const char *name, const char *wish) {
     return this;
 }
 void Shoujo_dtor(Shoujo *this) {
-    Entity_dtor( &(this->base) );
     free( this->name );
     free( this->wish );
+    Entity_dtor( &(this->base) );
     return;
 }
 int Shoujo_is_despair(void *this) {
     return ((Shoujo*)this)->kimoji <= -100;
 }
 void Shoujo_do_wish(void *this) {
-    printf("wish\n");
+    printf("%s\n", ((Shoujo*)this)->wish );
     return;
 }
 void Shoujo_despair(void *this) {
-    ((Shoujo*)this)->kimoji = 0;
+    ((Entity*)this)->hp = 0;
     return;
 }
 
@@ -52,6 +52,7 @@ Mahoushoujo *Mahoushoujo_ctor(Mahoushoujo *this, const char *name, const char *w
     this->atk = 100;
     this->is_dead = Entity_is_dead;
     this->do_wish = Mahoushoujo_do_wish;
+    this->base.despair = Mahoushoujo_despair;
     this->attack = Mahoushoujo_attack;
     this->skill = skill;
     return this;
@@ -61,7 +62,7 @@ void Mahoushoujo_dtor(Mahoushoujo *this){
     return;
 }
 void Mahoushoujo_do_wish(void *this) {
-    ((Shoujo*)this)->do_wish(this);
+    Shoujo_do_wish(this);
     printf("But nothing is good.\n");
     ((Shoujo*)this)->kimoji -= 10;
     return;
@@ -78,6 +79,7 @@ void Mahoushoujo_despair(void *this) {
 Majo *Majo_ctor(Majo *this, const char *name, const char *wish) {
     Shoujo_ctor( &(this->base), name, wish );
     this->base.base.hp *= 50;
+    ((Shoujo*)this)->despair = Majo_despair;
     this->atk = 10;
     this->is_dead = Entity_is_dead;
     this->attack = Majo_attack;
@@ -100,6 +102,13 @@ void Majo_despair(void *this) {
     return;
 }
 
+Majo *mhsj_to_mj(Mahoushoujo *mhsj) {
+    Majo *mj = malloc( sizeof(Majo) );
+    mj = Majo_ctor( mj, mhsj->base.name, mhsj->base.wish );
+    Mahoushoujo_dtor(mhsj);
+    return mj;
+}
+
 void Madoka_skill(void *this, void *target) {
     printf("Madoka become god, end.\n");
     exit(0);
@@ -114,10 +123,13 @@ void Homura_skill(void *this, void *target) {
 }
 void Sayaka_skill(void *this, void *target) {
     ((Entity*)this)->hp += 30;
-    ((Shoujo*)this)->kimoji += 30;
+    ((Shoujo*)this)->kimoji -= 30;
     return;
 }
 void Kyoko_skill(void *this, void *target) {
-    ((Entity*)this)->hp = 0;
-    ((Entity*)target)->hp = 0;
+    if( ((Shoujo*)target)->name == "Sayaka" ) {
+        ((Entity*)this)->hp = 0;
+        ((Entity*)target)->hp = 0;
+    }
+    return;
 }
