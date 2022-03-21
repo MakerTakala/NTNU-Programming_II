@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdio.h>
 #include "fraction_Arithmetic.h"
 
 void mixed_add( sMixedNumber *pNumber , const sMixedNumber r1, const sMixedNumber r2) {
@@ -30,6 +31,7 @@ void mixed_mul( sMixedNumber *pNumber , const sMixedNumber r1, const sMixedNumbe
 
 void mixed_div( sMixedNumber *pNumber , const sMixedNumber r1, const sMixedNumber r2) {
     if( r2.upper == 0 ) {
+        printf("Wrong Input!\n");
         exit(0);
     }
     pNumber->upper = r1.upper * r2.lower;

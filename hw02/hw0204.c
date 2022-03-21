@@ -33,11 +33,11 @@ int main() {
             cur += 2;
             tmp_str = cur;
             num_number.lower = strtol( tmp_str, &cur, 10);
-            cur += 1;
             if( num_number.lower == 0 ) {
                 printf("Wrong Input!\n");
                 exit(0);
             }
+            cur += 1;
         }
         
         if( *cur == ')' ) cur++;
