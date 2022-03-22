@@ -1,4 +1,4 @@
-# Homework02 4104702S 王重鈞
+# Homework02 41047025S 王重鈞
 
 Use "make" to compile all program file
 
