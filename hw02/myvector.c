@@ -134,8 +134,6 @@ int myvector_cvp( double *pX, double *pY, const double *pTx, const double *pTy, 
         M = ( C - B * (*pTy) ) / A;
         N = *pTy;
     }
-    printf("A:%lf B:%lf C:%lf D:%lf E:%lf F:%lf \n", A, B, C, D, E, F);
-    printf("M:%ld, N:%ld\n", M, N);
 
     for( int i = -1; i <= 1; i++ ) {
         for( int j = -1; j <= 1; j++ ) {
