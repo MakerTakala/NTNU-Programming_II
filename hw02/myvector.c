@@ -120,23 +120,34 @@ int myvector_cvp( double *pX, double *pY, const double *pTx, const double *pTy, 
     double AX = tmp_pA.data.c.x, AY = tmp_pA.data.c.y, BX = tmp_pB.data.c.x, BY = tmp_pB.data.c.y;
     double A = AX * AX + AY * AY, B = AX * BX + AY * BY, C = AX * (*pTx) + AY * (*pTy);
     double D = AX * BX + AY * BY, E = BX * BX + BY * BY, F = BX * (*pTx) + BY * (*pTy);
-    
-    int64_t VX = ( C * E - B * F ) / ( A * E - B * D );
-    int64_t VY = ( A * F - C * D ) / ( A * E - B * D );
+
+    double V_delta =  A * E - B * D;
+    int64_t M = 0, N = 0;
 
     double cloest_distance = DBL_MAX, cloest_x = 0, cloest_y = 0;
 
+    if( V_delta != 0 ) {
+        M = ( C * E - B * F ) / V_delta;
+        N = ( A * F - C * D ) / V_delta;
+    }
+    else {
+        M = ( C - B * (*pTy) ) / A;
+        N = *pTy;
+    }
+    printf("A:%lf B:%lf C:%lf D:%lf E:%lf F:%lf \n", A, B, C, D, E, F);
+    printf("M:%ld, N:%ld\n", M, N);
+
     for( int i = -1; i <= 1; i++ ) {
         for( int j = -1; j <= 1; j++ ) {
-            double distance = get_distance( *pTx, *pTy, ( VX + i ) * AX + ( VY + i ) * BX, ( VY + i ) * AY + ( VY + i ) * BY );
+            double distance = get_distance( *pTx, *pTy, ( M + i ) * AX + ( N + j ) * BX, ( M + i ) * AY + ( N + j ) * BY );
             if( distance < cloest_distance ) {
-                cloest_x = ( VX + i ) * AX + ( VY + i ) * BX;
-                cloest_y = ( VY + i ) * AY + ( VY + i ) * BY;
+                cloest_x = ( M + i ) * AX + ( N + j ) * BX;
+                cloest_y = ( M + i ) * AY + ( N + j ) * BY;
                 cloest_distance = distance;
             }
         }
     }
-
+    
     *pX = cloest_x;
     *pY = cloest_y;
     return 0;
