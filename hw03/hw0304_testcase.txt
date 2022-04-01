@@ -1,0 +1,2 @@
+maldives.bmp
+maldives_16bit.bmp

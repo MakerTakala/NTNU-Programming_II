@@ -1,4 +1,4 @@
 maldives.bmp
-maldives_outpout.bmp
+maldives_highlight.bmp
 (600,300)
 500
