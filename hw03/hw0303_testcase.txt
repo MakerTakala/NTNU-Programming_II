@@ -1,0 +1,4 @@
+maldives.bmp
+maldives_outpout.bmp
+(600,300)
+500
