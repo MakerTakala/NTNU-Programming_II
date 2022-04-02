@@ -23,6 +23,13 @@ typedef struct {
     uint32_t	important;
 }__attribute__ ((__packed__)) sBmpHeader;
 
+typedef struct{
+    uint32_t rgbBlue;
+    uint32_t rgbGreen;
+    uint32_t rgbRed;
+    uint32_t rgbReserved;
+}__attribute__ ((__packed__)) MASK;
+
 void string_input_template( char input[] );
 
 int main() {
@@ -41,7 +48,7 @@ int main() {
         exit(0);
     }
     fread( &header, sizeof( header ), 1, input_image );
-    if( header.bm[0] != 'B' || header.bm[1] !='M' ) {
+    if( strncmp( header.bm, "BM", 2 ) ) {
         printf("Wrong file format!\n");
         exit(0);
     }
@@ -53,8 +60,14 @@ int main() {
         exit(0);
     }
 
+    header.offset = 70;
     header.bpp = 16;
+    header.compression = 3;
     fwrite( &header, sizeof( header ), 1, output_image );
+
+    MASK mask565 = { 0b1111100000000000, 0b0000011111100000, 0b0000000000011111, 0b0000000000000000 };
+    fwrite( &mask565, sizeof( MASK ), 1, output_image );
+
 
     while( !feof( input_image ) ) {
         uint8_t original[3] = {0};
@@ -65,10 +78,8 @@ int main() {
         modified[0] += ( original[1] & 0b11100000 ) >> 5;
         modified[1] += ( original[1] & 0b00011100 ) << 3;
         modified[1] += ( original[2] & 0b11111000 ) >> 3;
-
         fwrite( modified, 2, 1, output_image );
     }
-
 
     fclose( input_image );
     fclose( output_image );

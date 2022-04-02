@@ -1,4 +1,4 @@
 maldives.bmp
 maldives_highlight.bmp
-(600,300)
+(800,300)
 500
