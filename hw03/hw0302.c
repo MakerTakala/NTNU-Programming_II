@@ -57,8 +57,8 @@ int main() {
         fgets( number, 16, srt_file );
         char time_input[128] = {0};
         fgets( time_input, 128, srt_file );
-        sscanf( time_input, "%u:%u:%u,%u --> %u:%u:%u,%u\n", \
-        &start_time.hour, &start_time.minute, &start_time.second, &start_time.millisecond, \
+        sscanf( time_input, "%u:%u:%u,%u --> %u:%u:%u,%u\n",
+        &start_time.hour, &start_time.minute, &start_time.second, &start_time.millisecond,
         &end_time.hour,   &end_time.minute,   &end_time.second,   &end_time.millisecond );
         
         while( compare( &cur_time, &start_time ) ) {

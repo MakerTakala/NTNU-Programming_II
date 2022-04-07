@@ -45,18 +45,20 @@ int main(){
     }
     
     typedef struct{
-        char book_id[129];
         uint32_t chapter;
         uint32_t verse;
-        char text[4097];
+        char text[4096];
+        char translation_id[64];
+        char book_id[128];
+        char book_name[64];
     }_line;
 
     char input[MAX_VERSE_SIZE] = {0};
-    _line **output = calloc( sizeof( _line ), MAX_OUTPUT_LINE );
+    _line **output = calloc( sizeof( _line* ), MAX_OUTPUT_LINE );
 
     uint32_t counter = 0;
     while( !feof( bible ) ) {
-        fgets( input, MAX_VERSE_SIZE, bible );
+        fgets( input, MAX_VERSE_SIZE - 1, bible );
         if( input[ strlen( input ) - 1 ] == '\n' ) {
             input[ strlen( input ) - 1 ] = 0;
         }
@@ -65,20 +67,16 @@ int main(){
             while( ( c = fgetc( bible ) ) != '\n' && c != EOF ){}
         }
         _line *line = calloc( sizeof( _line ), 1 );
-        char *book_id_start = strstr( input , "\"book_id\":\"" ) + 11;
-        char *book_id_end = strchr( book_id_start, '\"' );
-        strncpy( line->book_id, book_id_start, book_id_end - book_id_start );
-        line->chapter = strtol( strstr( input, "\"chapter\":" ) + 10, NULL, 10 );
-        line->verse = strtol( strstr( input, "\"verse\":" ) + 8, NULL, 10 );
-        char *text_start = strstr( input , "\"text\":\"" ) + 8;
-        char *text_end = strchr( text_start, '\"' );
-        strncpy( line->text, text_start, text_end - text_start );
+        
+        sscanf( input, "{\"chapter\":%u,\"verse\":%u,\"text\":\"%[^\"]\",\"translation_id\":\"%[^\"]\",\"book_id\":\"%[^\"]\",\"book_name\":\"%[^\"]\"}" ,
+        &line->chapter, &line->verse, line->text, line->translation_id, line->book_id, line->book_name);
+        
         if( strcasestr( line->text, searching_string ) != NULL ) {
             output[counter] = line;
             counter++;
         }
     }
-    output = realloc( output, counter );
+    output = realloc( output, counter * sizeof( _line* ) );
 
     printf( "Found %u time(s)\n", counter );
     for( int i = 0; i < counter; i++ ) {
