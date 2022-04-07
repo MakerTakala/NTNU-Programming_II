@@ -57,8 +57,7 @@ int main(){
     _line **output = calloc( sizeof( _line* ), MAX_OUTPUT_LINE );
 
     uint32_t counter = 0;
-    while( !feof( bible ) ) {
-        fgets( input, MAX_VERSE_SIZE - 1, bible );
+    while( fgets( input, MAX_VERSE_SIZE - 1, bible ) ) {
         if( input[ strlen( input ) - 1 ] == '\n' ) {
             input[ strlen( input ) - 1 ] = 0;
         }

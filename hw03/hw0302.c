@@ -52,9 +52,8 @@ int main() {
 
     system( "clear" );
     cur_time.millisecond += START_DELAY;
-    while( !feof( srt_file ) ) {
-        char number[16] = {0};
-        fgets( number, 16, srt_file );
+    char number[16] = {0};
+    while( fgets( number, 16, srt_file ) ) {
         char time_input[128] = {0};
         fgets( time_input, 128, srt_file );
         sscanf( time_input, "%u:%u:%u,%u --> %u:%u:%u,%u\n",
