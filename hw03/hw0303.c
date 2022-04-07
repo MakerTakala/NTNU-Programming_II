@@ -44,7 +44,7 @@ int main() {
         exit(0);
     }
     fread( &header, sizeof( header ), 1, input_image );
-    if( strncmp( header.bm, "BM", 2 ) ) {
+    if( strncmp( header.bm, "BM", 2 ) || header.bpp != 24 ) {
         printf("Wrong file format!\n");
         exit(0);
     }

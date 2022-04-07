@@ -48,7 +48,7 @@ int main() {
         exit(0);
     }
     fread( &header, sizeof( header ), 1, input_image );
-    if( strncmp( header.bm, "BM", 2 ) ) {
+    if( strncmp( header.bm, "BM", 2 ) || header.bpp != 24 ) {
         printf("Wrong file format!\n");
         exit(0);
     }
@@ -63,23 +63,31 @@ int main() {
     header.offset = 70;
     header.bpp = 16;
     header.compression = 3;
+    header.size = 70 + ( 16 * header.width + 31 ) / 32 * 4;
+    header.bitmap_size = ( 16 * header.width + 31 ) / 32 * 4;
     fwrite( &header, sizeof( header ), 1, output_image );
 
-    MASK mask565 = { 0b1111100000000000, 0b0000011111100000, 0b0000000000011111, 0b0000000000000000 };
+    MASK mask565 = { 0b1111100000000000U, 0b0000011111100000U, 0b0000000000011111U, 0b0000000000000000U };
     fwrite( &mask565, sizeof( MASK ), 1, output_image );
 
 
     while( !feof( input_image ) ) {
         uint8_t original[3] = {0};
-        uint8_t modified[2] = {0};
+        uint16_t modified = 0;
         
         fread( original, 1, 3, input_image );
+        /*
         modified[0] += original[0] & 0b11111000;
         modified[0] += ( original[1] & 0b11100000 ) >> 5;
         modified[1] += ( original[1] & 0b00011100 ) << 3;
         modified[1] += ( original[2] & 0b11111000 ) >> 3;
-        fwrite( modified, 2, 1, output_image );
+        */
+        modified += ( original[2] * 31 / 255 ) << 11;
+        modified += ( original[1] * 63 / 255 ) << 5;
+        modified += ( original[0] * 31 / 255 );
+        fwrite( &modified, 2, 1, output_image );
     }
+    printf("Done\n");
 
     fclose( input_image );
     fclose( output_image );

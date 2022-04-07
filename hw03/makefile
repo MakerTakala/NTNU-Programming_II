@@ -3,10 +3,14 @@ SRC = $(wildcard *.c)
 all:$(SRC:.c=.o)
 	gcc hw0301.o -o hw0301
 	gcc hw0302.o -o hw0302
+
 	gcc hw0303.o -o hw0303 -lm
 	-./hw0303 < hw0303_testcase.txt
 	gcc hw0304.o -o hw0304
 	-./hw0304 < hw0304_testcase.txt
+
+	gcc hw0306_example.c -o hw0306_example -lm
+	gcc hw0306_sample.c -o hw0306_sample -lm
 
 	make clean
 

@@ -32,6 +32,10 @@ int main(){
         uint32_t c = 0;
         while( ( c = fgetc( stdin ) ) != '\n' && c != EOF ){}
     }
+    if( *searching_string == 0 ) {
+        printf("Wrong Input\n");
+        exit(0);
+    }
     string_to_lowercase( searching_string );
 
     FILE *bible = NULL;
