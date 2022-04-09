@@ -24,3 +24,6 @@ typedef struct {
 FILE *open_file( char question[], char permission[], uint64_t max_name_size );
 void stdin_input_string( char *buffer, uint64_t max_name_size );
 double ask_angle();
+void count_width_height( uint32_t width, uint32_t height, double angle, uint32_t *new_width, uint32_t *new_height );
+uint64_t ask( char question[] );
+void print_menu();
