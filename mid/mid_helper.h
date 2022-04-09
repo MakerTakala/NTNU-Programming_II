@@ -19,7 +19,8 @@ typedef struct {
     uint32_t	vres;
     uint32_t	used;
     uint32_t	important;
-}__attribute__ ((__packed__)) sBmpHeader;
+}__attribute__ ((__packed__)) BmpHeader;
 
 FILE *open_file( char question[], char permission[], uint64_t max_name_size );
 void stdin_input_string( char *buffer, uint64_t max_name_size );
+double ask_angle();

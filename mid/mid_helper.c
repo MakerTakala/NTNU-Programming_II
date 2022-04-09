@@ -29,3 +29,14 @@ void stdin_input_string( char *buffer, uint64_t max_name_size ) {
         while( ( c = fgetc( stdin ) ) != '\n' && c != EOF ){}
     }
 }
+
+double ask_angle() {
+    printf( "Rotation angle (int, 0-360): " );
+    double angle = 0;
+    scanf( "%lf", angle );
+    if( angle < 0 || 360 < angle ) {
+        printf( "Wrong angle!!\n" );
+        exit(0);
+    }
+    return angle;
+}
