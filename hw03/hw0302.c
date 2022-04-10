@@ -6,9 +6,6 @@
 #include <unistd.h>
 
 #define MAX_STRING_SIZE 4097
-#define BASE_MILLISECOND 150
-#define START_DELAY 500
-#define ADD_DELAY 100
 
 typedef struct {
     uint32_t hour;
@@ -17,14 +14,17 @@ typedef struct {
     uint32_t millisecond;
 }Time;
 
+typedef struct {
+    Time start;
+    Time end;
+    char line[4096];
+}Data;
+
 void string_input_template( char input[] );
-void time_add( Time *time );
-bool compare( Time *cur_time, Time *cmp_time );
+uint64_t diff( Time a, Time b );
 
 int main() {
     Time cur_time = {0, 0, 0, 0};
-    Time start_time = {0, 0, 0, 0};
-    Time end_time = {0, 0, 0, 0};
 
     FILE *srt_file = NULL;
     char srt_file_name[MAX_STRING_SIZE] = {0};
@@ -51,36 +51,40 @@ int main() {
     }
 
     system( "clear" );
-    cur_time.millisecond += START_DELAY;
+
+    Data data[1028];
+    uint32_t counter = 0;
     char number[16] = {0};
+    char time_input[128] = {0};
     while( fgets( number, 16, srt_file ) ) {
-        char time_input[128] = {0};
+
         fgets( time_input, 128, srt_file );
         sscanf( time_input, "%u:%u:%u,%u --> %u:%u:%u,%u\n",
-        &start_time.hour, &start_time.minute, &start_time.second, &start_time.millisecond,
-        &end_time.hour,   &end_time.minute,   &end_time.second,   &end_time.millisecond );
-        
-        while( compare( &cur_time, &start_time ) ) {
-            time_add( &cur_time );
-            usleep( BASE_MILLISECOND * ( 1.0 / speed ) );
-        }
+        &(data[counter].start.hour), &(data[counter].start.minute), &(data[counter].start.second), &(data[counter].start.millisecond),
+        &(data[counter].end.hour),   &(data[counter].end.minute),   &(data[counter].end.second),   &(data[counter].end.millisecond) ); 
+
         while( true ) {
             char line[MAX_STRING_SIZE] = {0};
             fgets( line, MAX_STRING_SIZE, srt_file );
             if( line[0] == '\n' ) {
                 break;
             }
-            printf("%s", line);
+            strcat( data[counter].line, line );
         }
-        while( compare( &cur_time, &end_time ) ) {
-            time_add( &cur_time );
-            usleep( BASE_MILLISECOND * ( 1.0 / speed ) );
-        }
-        system( "clear" );
-        cur_time.millisecond += ADD_DELAY * speed;
+        counter++;
     }
-
     fclose( srt_file );
+    uint64_t duration = 0;
+    for( int i = 0; i < counter; i++ ) {
+        
+        duration = diff( cur_time, data[i].start );
+        usleep( ( (double)duration * 1000 ) / speed );
+        printf( "%s" ,data[i].line );
+        duration = diff( data[i].start, data[i].end );
+        usleep( ( (double)duration * 1000 ) / speed );
+        cur_time = data[i].end;
+        system( "clear" );
+    }
 
     return 0;
 }
@@ -99,37 +103,9 @@ void string_input_template( char input[] ) {
     }
 }
 
-void time_add( Time *cur_time ) {
-    cur_time->millisecond += 1;
-    if( cur_time->millisecond >= 1000 ) {
-        cur_time->millisecond -= 1000;
-        cur_time->second += 1;
-    }
-    if( cur_time->second >= 60 ) {
-        cur_time->second -= 60;
-        cur_time->minute += 1;
-    }
-    if( cur_time->minute >= 60 ) {
-        cur_time->minute -= 60;
-        cur_time->hour += 1;
-    }
-}
-
-bool compare( Time *cur_time, Time *cmp_time ) {
-    if( cur_time->hour == cmp_time->hour ) {
-        if( cur_time->minute == cmp_time->minute ) {
-            if( cur_time->second == cmp_time->second ) {
-                return cur_time->millisecond <= cmp_time->millisecond;
-            }
-            else {
-                return cur_time->second < cmp_time->second;
-            }
-        }
-        else {
-            return cur_time->minute < cmp_time->minute;
-        }
-    }
-    else {
-        return cur_time->hour < cmp_time->hour;
-    }
+uint64_t diff( Time a, Time b ) {
+    uint64_t a_t, b_t;
+    a_t = ( ( a.hour * 60 + a.minute ) * 60 + a.second ) * 1000 + a.millisecond;
+    b_t = ( ( b.hour * 60 + b.minute ) * 60 + b.second ) * 1000 + b.millisecond;
+    return b_t - a_t;
 }

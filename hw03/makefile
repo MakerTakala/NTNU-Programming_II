@@ -2,7 +2,7 @@ SRC = $(wildcard *.c)
 
 all:$(SRC:.c=.o)
 	gcc hw0301.o -o hw0301
-	gcc hw0302.o -o hw030
+	gcc hw0302.o -o hw0302
 	gcc hw0303.o -o hw0303 -lm
 	gcc hw0304.o -o hw0304
 	gcc hw0305.c -o hw0305
