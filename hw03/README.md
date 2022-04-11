@@ -37,3 +37,6 @@ piece.
 5. The other blocks is one move from the above state.
 
 Any input that doesn't meet the format will let the program terminate.
+
+<font color=#FF0000>WARNING!!! The program only support 24-bit BMP file.</font>  
+<font color=#FF0000>If m,n are not divisible image width and height, the image will be split in first quadrant and ingnore side pixel.</font>

@@ -10,10 +10,6 @@ all:$(SRC:.c=.o)
 	gcc hw0306_sample.c -o hw0306_sample -lm
 	make clean
 
-	-./hw0303 < ./testcase/hw0303_testcase.txt
-	-./hw0304 < ./testcase/hw0304_testcase.txt
-	-./hw0305 < ./testcase/hw0305_testcase.txt
-
 .PHONY : new zip clean cleanexe
 
 new:
