@@ -175,16 +175,16 @@ int main() {
 
             for( int y = 0; y < header.height; y++ ) {
                 for( int x = 0; x < header.width; x++ ) {
-                    new_image_data[y][x][0] = cur_image_data[y][x][0];
-                    new_image_data[y][x][1] = cur_image_data[y][x][1];
-                    new_image_data[y][x][2] = cur_image_data[y][x][2];
+                    for( int k = 0; k < 3; k++ ) {
+                        new_image_data[y][x][k] = cur_image_data[y][x][k];
+                    }
                 }
             }
             for( int a = 0; a < split_height; a++ ) {
                 for( int b = 0; b < split_width; b++ ) {
-                    swap( &(new_image_data[swap1_y * split_height + a][swap1_x * split_width + b ][0]), &(new_image_data[swap2_y * split_height + a][swap2_x * split_width + b ][0]) );
-                    swap( &(new_image_data[swap1_y * split_height + a][swap1_x * split_width + b ][1]), &(new_image_data[swap2_y * split_height + a][swap2_x * split_width + b ][1]) );
-                    swap( &(new_image_data[swap1_y * split_height + a][swap1_x * split_width + b ][2]), &(new_image_data[swap2_y * split_height + a][swap2_x * split_width + b ][2]) );
+                    for( int k = 0; k < 3; k++ ) {
+                        swap( &(new_image_data[swap1_y * split_height + a][swap1_x * split_width + b][k]), &(new_image_data[swap2_y * split_height + a][swap2_x * split_width + b ][k]) );
+                    }
                 }
             }
         }
@@ -202,50 +202,36 @@ int main() {
             }
         }
 
-        for( int x = 0; x < header.width; x++ ) {
-            for( int k = 0; k <= 2; k++ ) {
-                new_image_data[k][x][0] = 0;
-                new_image_data[k][x][1] = 0;
-                new_image_data[k][x][2] = 0xFF;
-            }
-        }
-        for( int y = 0; y < header.width; y++ ) {
-            for( int k = 0; k <= 2; k++ ) {
-                new_image_data[y][k][0] = 0;
-                new_image_data[y][k][1] = 0;
-                new_image_data[y][k][2] = 0xFF;
-            }
-        }
-        for( int y = 1; y < n; y++ ) {
+        for( int y = 0; y < n; y++ ) {
             for( int x = 0; x < header.width; x++ ) {
-                for( int k = -1; k <= 1; k++ ) {
-                    new_image_data[y * split_height + k][x][0] = 0;
-                    new_image_data[y * split_height + k][x][1] = 0;
-                    new_image_data[y * split_height + k][x][2] = 0xFF;
+                for( int k = 0; k <= 2; k++ ) {
+                    for(int t = 0; t < 3; t++) {
+                        new_image_data[y * split_height + k][x][t] = 0;
+                    }
                 }
             }
         }
-        for( int x = 1; x < m; x++ ) {
+        for( int x = 0; x < m; x++ ) {
             for( int y = 0; y < header.height; y++ ) {
-                for( int k = -1; k <= 1; k++ ) {
-                    new_image_data[y][x * split_width + k][0] = 0;
-                    new_image_data[y][x * split_width + k][1] = 0;
-                    new_image_data[y][x * split_width + k][2] = 0xFF;
+                for( int k = 0; k <= 2; k++ ) {
+                    for(int t = 0; t < 3; t++) {
+                        new_image_data[y][x * split_width + k][t] = 0;
+                    }
                 }
             }
         }
         for( int x = 0; x < header.width; x++ ) {
             for( int k = -3; k <= -1 ; k++ ) {
-                new_image_data[header.height + k][x][0] = 0;
-                new_image_data[header.height + k][x][1] = 0;
-                new_image_data[header.height + k][x][2] = 0xFF;
+                for(int t = 0; t < 3; t++) {
+                    new_image_data[n * split_height + k][x][t] = 0;
+                }
             }
         }
-        for( int y = 0; y < header.width; y++ ) {
+        for( int y = 0; y < header.height; y++ ) {
             for( int k = -3; k <= -1 ; k++ ) {
-                new_image_data[y][header.width + k][0] = 0;
-                new_image_data[y][header.width + k][1] = 0;
-                new_image_data[y][header.width + k][2] = 0xFF;
+                for(int t = 0; t < 3; t++) {
+                    new_image_data[y][m * split_width + k][t] = 0;
+                }
             }
         }
         fwrite( &new_image_data, 3 * header.width * header.height, 1, new_image );
