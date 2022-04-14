@@ -20,4 +20,4 @@ typedef struct {
     uint32_t	important;
 }__attribute__ ((__packed__)) BmpHeader;
 
-FILE *open_file( char permission[], uint64_t max_name_size, char *name );
+FILE *open_file( char name[], char permission[] );
