@@ -5,11 +5,13 @@
 #include <time.h>
 #include "file_processing.h"
 
+#define WHITE {0xFF, 0xFF, 0xFF}
+
 int main( int argc, char *argv[] ) {
     srandom( time(NULL) );
 
     if( argc != 2 ) {
-        printf( "Wrong Argument!!\n" );
+        printf( "Wrong Option!!\n" );
         exit(0);
     }
     char image_name[4096] = {0};
@@ -31,18 +33,12 @@ int main( int argc, char *argv[] ) {
     for( int i = 0; i < header.height; i++ ) {
         for( int j = 0; j < header.width; j++ ) {
             uint8_t gray = (uint8_t)( (double)image_data[i][j][0] * 0.114 + (double)image_data[i][j][1] * 0.587 + (double)image_data[i][j][2] * 0.299 );
-            gray = ( gray <= 127 ? 0 : 0XFF );
-            for( int k = 0; k < 3; k++ ) {
+            gray = ( gray < 128 ? 0 : 0XFF );
+            for( int k = 0; k < 3; k++ )
                 image_data[i][j][k] = gray;
-            }
         }
     }
-
-    FILE *out = fopen( "out.bmp", "w" );
-    fwrite( &header, sizeof( header ), 1, out );
-    fwrite( &image_data, sizeof( image_data ), 1, out );
-    fclose( out );
-
+    
     header.height *= 2;
     header.width *= 2;
     header.size = 54 + ( header.height * header.width * 24 / 8 );
@@ -63,29 +59,7 @@ int main( int argc, char *argv[] ) {
         memset( layer2_data, 0, header.width * 2 * 3 );
         memset( overlap_data, 0, header.width * 2 * 3 );
         for( int j = 0; j < header.width / 2; j++ ) {
-            if( image_data[i][j][0] == 0 ) {
-                if( random() & 1 ) {
-                    for( int k = 0; k < 3; k++ )
-                        layer1_data[0][j * 2 + 0][k] = 0XFF;
-                    for( int k = 0; k < 3; k++ )
-                        layer1_data[1][j * 2 + 1][k] = 0XFF;
-                    for( int k = 0; k < 3; k++ )
-                        layer2_data[0][j * 2 + 1][k] = 0XFF;
-                    for( int k = 0; k < 3; k++ )
-                        layer2_data[1][j * 2 + 0][k] = 0XFF;
-                }
-                else {
-                    for( int k = 0; k < 3; k++ )
-                        layer1_data[0][j * 2 + 1][k] = 0XFF;
-                    for( int k = 0; k < 3; k++ )
-                        layer1_data[1][j * 2 + 0][k] = 0XFF;
-                    for( int k = 0; k < 3; k++ )
-                        layer2_data[0][j * 2 + 0][k] = 0XFF;
-                    for( int k = 0; k < 3; k++ )
-                        layer2_data[1][j * 2 + 1][k] = 0XFF;
-                }
-            }
-            else {
+            if( image_data[i][j][0] == 0XFF ) {
                 if( random() & 1 ) {
                     for( int k = 0; k < 3; k++ )
                         layer1_data[0][j * 2 + 0][k] = 0XFF;
@@ -113,6 +87,28 @@ int main( int argc, char *argv[] ) {
                         overlap_data[0][j * 2 + 1][k] = 0XFF;
                     for( int k = 0; k < 3; k++ )
                         overlap_data[1][j * 2 + 0][k] = 0XFF;
+                }
+            }
+            else {
+                if( random() & 1 ) {
+                    for( int k = 0; k < 3; k++ )
+                        layer1_data[0][j * 2 + 1][k] = 0XFF;
+                    for( int k = 0; k < 3; k++ )
+                        layer1_data[1][j * 2 + 0][k] = 0XFF;
+                    for( int k = 0; k < 3; k++ )
+                        layer2_data[0][j * 2 + 0][k] = 0XFF;
+                    for( int k = 0; k < 3; k++ )
+                        layer2_data[1][j * 2 + 1][k] = 0XFF;
+                }
+                else {
+                    for( int k = 0; k < 3; k++ )
+                        layer1_data[0][j * 2 + 0][k] = 0XFF;
+                    for( int k = 0; k < 3; k++ )
+                        layer1_data[1][j * 2 + 1][k] = 0XFF;
+                    for( int k = 0; k < 3; k++ )
+                        layer2_data[0][j * 2 + 1][k] = 0XFF;
+                    for( int k = 0; k < 3; k++ )
+                        layer2_data[1][j * 2 + 0][k] = 0XFF;
                 }
             }
             srandom( random() );
