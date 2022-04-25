@@ -14,15 +14,9 @@ struct option long_options[] = {
     { 0, 0, 0, 0 },
 };
 
-int main( int argc, char *argv[] ) {
+bool linenum = false, color = false, language = false;
 
-    char file_name[4096] = {0};
-    strncpy( file_name, argv[argc - 1], 4096 );
-    FILE *file = open_file( file_name, "r" );
-    printf("file:%s\n", file_name);
-
-    bool linenum = false, color = false, language = false;
-
+void read_option( int argc, char *argv[] ) {
     char c = 0;
     while( ( c = getopt_long( argc, argv, "ncl:", long_options, NULL ) ) != -1 ) {
         switch ( c ) {
@@ -45,6 +39,15 @@ int main( int argc, char *argv[] ) {
                 break;
         }
     }
+    return ;
+}
+
+int main( int argc, char *argv[] ) {
+
+    FILE *file = open_file( argv[argc - 1], "r" );
+    read_option( argc, argv );
+    
+    
 
 
 
