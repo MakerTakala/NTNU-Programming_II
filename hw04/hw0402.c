@@ -10,6 +10,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+#include "file_processing.h"
 
 
 bool if_file = false, if_struct_name = false, if_output_name = false;
@@ -59,6 +60,7 @@ uint64_t util_getFdSize( int fd )
     return statbuf.st_size;
 }
 
+
 int main( int argc, char *argv[] ) {
     strcpy( struct_name, "Test" );
     strcpy( output_name, "test" );
@@ -89,50 +91,66 @@ int main( int argc, char *argv[] ) {
             continue;
         }
         offset += strlen(cur_member_name) + 1;
+        char tmp_cur_member_name[256] = {0};
         
         for( int i = 0, j = 0; i < strlen(cur_member_name); i++ ) {
             if( isalnum( cur_member_name[i] ) ) {
-                member_name[member_index][j++] = tolower(cur_member_name[i]);
+                tmp_cur_member_name[j++] = tolower(cur_member_name[i]);
             } 
-        }    
-        member_size[member_index] = ( strlen(cur_member_name) + 1 ) / 2;
-        printf("%s: %d\n", member_name[member_index], member_size[member_index]);
-        
-        member_index++;
+        }
+        if( index != 0 && !strcmp( member_name[member_index - 1], tmp_cur_member_name ) ) {
+            member_size[member_index] += ( strlen(cur_member_name) + 1 ) / 2;
+        }
+        else {
+            member_size[member_index] = ( strlen(cur_member_name) + 1 ) / 2;
+            strcpy( member_name[member_index], tmp_cur_member_name );
+            printf("%s: %d\n", member_name[member_index], member_size[member_index]);
+            member_index++;
+        }
     }
+
+    char tmp_h_output_name[256];
+    strcpy( tmp_h_output_name, output_name );
+    FILE *p_h_file = open_file( strcat( tmp_h_output_name, ".h"), "w" );
+    fprintf( p_h_file, "#pragma once\n\n#include <stdint.h>\n\ntypedef struct _s%s\n{\n", struct_name );
+    for( int i = 0; i < member_index; i++ ) {
+        if( member_size[i] != 8 && member_size[i] != 16 && member_size[i] != 32 && member_size[i] !=64 ) {
+            if( member_size[i] % 8 == 0) fprintf( p_h_file, "\tuint8_t %s[%d];\n", member_name[i], (member_size[i] - 1) / 8 + 1 );
+            else if( member_size[i] <= 8 ) fprintf( p_h_file, "\tuint8_t %s;\n", member_name[i] );
+            else if( member_size[i] <= 16 ) fprintf( p_h_file, "\tuint16_t %s;\n", member_name[i] );
+            else if( member_size[i] <= 32 ) fprintf( p_h_file, "\tuint32_t %s;\n", member_name[i] );
+            else if( member_size[i] <= 64 ) fprintf( p_h_file, "\tuint64_t %s;\n", member_name[i] );
+            else fprintf( p_h_file, "\tuint8_t %s[%d];\n", member_name[i], member_size[i] / 8 + 1 );
+        }
+        else {
+            fprintf( p_h_file, "\tuint%d_t %s;\n", member_size[i], member_name[i] );
+        }
+    }
+    fprintf( p_h_file, "}%s;\n\nIPH * iph_init( void );\nvoid iph_free( IPH * );\nint iph_encode( void *, const IPH * );\nint iph_decode( const void *, IPH * );", struct_name );
+    fclose( p_h_file );
+
+    char tmp_c_output_name[256];
+    strcpy( tmp_c_output_name, output_name );
+    FILE *p_c_file = open_file( strcat( tmp_c_output_name, ".c"), "w" );
+    fprintf( p_c_file, "#include <stdint.h>\n#include <stdlib.h>\n#include \"%s.h\"\n\n", output_name );
+    fprintf( p_c_file, "IPH * iph_init( void ){\n\treturn malloc( sizeof(%s) );\n}\n\n", struct_name );
+    fprintf( p_c_file, "void iph_free( IPH * this){\n\tfree(this);\n\treturn;\n}\n\n" );
+
+    fprintf( p_c_file, "int iph_encode( void *buffer, const %s *this ){\n", struct_name );
+    fprintf( p_c_file, "\tif(!buffer) {\n\t\treturn 0;\n\t}\n");
+
+    fprintf( p_c_file, "\treturn 1;\n}\n\n");
+
+    fprintf( p_c_file, "int iph_decode( const void *buffer, %s *this ){\n", struct_name );
+    fprintf( p_c_file, "\tif(!buffer) {\n\t\treturn 0;\n\t}\n");
+
+    fprintf( p_c_file, "\treturn 1;\n}\n\n");
+
+    fclose( p_c_file );
+
+    munmap( p_file, file_size );
+    close( file );
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /*
-    int32_t h_file = open( strcat( output_name, ".c"), O_WRONLY );
-    if( h_file == -1 ) {
-        printf("File can't be opned.\n");
-        exit(0);
-    }
-    char *h_p_file = mmap( 0, 100000, PROT_WRITE, MAP_SHARED, h_file, 0 );
-
-    int32_t c_file = open( strcat( output_name, ".h"), O_WRONLY );
-    if( c_file == -1 ) {
-        printf("File can't be opned.\n");
-        exit(0);
-    }
-    char *c_p_file = mmap( 0, 100000, PROT_WRITE, MAP_SHARED, c_file, 0 );
-    */
-    
-
-
     return 0;
 }
+
