@@ -12,8 +12,6 @@
 #include "keyword.h"
 
 #define COLOR_RED "\33[91m"
-#define COLOR_GREEN "\33[92m"
-#define COLOR_BLUE "\33[94m"
 #define COLOR_NONE "\33[0m"
 
 struct option long_options[] = {
