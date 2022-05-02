@@ -158,8 +158,10 @@ int main( int argc, char *argv[] ) {
     buffer_index = 0, struct_index = 0;
     for( int i = 0 ; i < member_index; i++ ) {
         for( int j = member_size[i]; j > 0; j -= 8 ) {
-            for( int k = j > 7 ? 7 : j - 1 ; k >= 0; k-- ) {
-                
+            fprintf( p_c_file, "\t*((uint8_t*)this+%lu) = 0;\n", struct_index );
+            for( int k = 0 ; k < ( j >= 8 ? 8 : j ) ; k++ ) {
+                fprintf( p_c_file, "\t*((uint8_t*)this+%lu) |= ((((uint8_t)1<<%lu)&(*((uint8_t*)buffer + %lu)))&1)<<%d;\n", struct_index, 7 - buffer_index % 8, buffer_index / 8, k );
+                buffer_index++;
             }
             struct_index++;
         }
