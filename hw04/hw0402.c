@@ -126,7 +126,7 @@ int main( int argc, char *argv[] ) {
             fprintf( p_h_file, "\tuint%d_t %s;\n", member_size[i], member_name[i] );
         }
     }
-    fprintf( p_h_file, "}%s;\n\nIPH * iph_init( void );\nvoid iph_free( IPH * );\nint iph_encode( void *, const IPH * );\nint iph_decode( const void *, IPH * );", struct_name );
+    fprintf( p_h_file, "}__attribute__((packed)) %s;\n\nIPH * iph_init( void );\nvoid iph_free( IPH * );\nint iph_encode( void *, const IPH * );\nint iph_decode( const void *, IPH * );", struct_name );
     fclose( p_h_file );
 
     char tmp_c_output_name[256];

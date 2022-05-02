@@ -18,7 +18,7 @@ typedef struct _sIPH
 	uint32_t destinationaddress;
 	uint8_t options[3];
 	uint8_t padding;
-}IPH;
+}__attribute__((packed)) IPH;
 
 IPH * iph_init( void );
 void iph_free( IPH * );
