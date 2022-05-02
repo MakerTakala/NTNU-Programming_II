@@ -221,7 +221,6 @@ void print_health_status() {
 
 void print_money() {
     system("clear");
-    printf("now:%hu\n", p_file[0X58]);
     ask_money();
     p_file[0X58] = value ;
 }

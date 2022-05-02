@@ -125,7 +125,7 @@ int main( int argc, char *argv[] ) {
             if( !strncmp( p_file + offset, "*/", 2 ) ) {
                 many_line_annotation = false;
             }
-            if( *(p_file + offset) == '\"' && *(p_file + offset - 1) != '\\' ) {
+            if( *(p_file + offset) == '\"' && *(p_file + offset - 1) != '\\' && !many_line_annotation && !one_line_annotation ) {
                 quotation = quotation ^ 1;
             }
             offset++;
@@ -140,12 +140,6 @@ int main( int argc, char *argv[] ) {
         
         offset += strlen(cur_word);
     }
-    //continue
-    /*continue
-
-
-    */
-
     munmap( p_file, file_size );
     return 0;
 }

@@ -137,13 +137,33 @@ int main( int argc, char *argv[] ) {
     fprintf( p_c_file, "void iph_free( IPH * this){\n\tfree(this);\n\treturn;\n}\n\n" );
 
     fprintf( p_c_file, "int iph_encode( void *buffer, const %s *this ){\n", struct_name );
-    fprintf( p_c_file, "\tif(!buffer) {\n\t\treturn 0;\n\t}\n");
-
+    fprintf( p_c_file, "\tif(!buffer||!this) {\n\t\treturn 0;\n\t}\n");
+    uint64_t buffer_index = 0, struct_index = 0;
+    for( int i = 0; i < member_index; i++ ) {
+        for( int j = member_size[i]; j > 0; j -= 8 ) {
+            for( int k = 0 ; k < ( j > 8 ? 8 : j ) ; k++ ) {
+                if( buffer_index % 8 == 0 ) {
+                    fprintf( p_c_file, "\t*((uint8_t*)buffer+%lu) = 0;\n", buffer_index / 8 );
+                }
+                fprintf( p_c_file, "\t*((uint8_t*)buffer+%lu) |= ((((uint8_t)1<<%d)&(*((uint8_t*)this + %lu)))&1)<<%lu;\n", buffer_index / 8, k, struct_index, 7 - buffer_index % 8 );
+                buffer_index++;
+            }
+            struct_index++;
+        }
+    }
     fprintf( p_c_file, "\treturn 1;\n}\n\n");
 
     fprintf( p_c_file, "int iph_decode( const void *buffer, %s *this ){\n", struct_name );
-    fprintf( p_c_file, "\tif(!buffer) {\n\t\treturn 0;\n\t}\n");
-
+    fprintf( p_c_file, "\tif(!buffer||!this) {\n\t\treturn 0;\n\t}\n");
+    buffer_index = 0, struct_index = 0;
+    for( int i = 0 ; i < member_index; i++ ) {
+        for( int j = member_size[i]; j > 0; j -= 8 ) {
+            for( int k = j > 7 ? 7 : j - 1 ; k >= 0; k-- ) {
+                
+            }
+            struct_index++;
+        }
+    }
     fprintf( p_c_file, "\treturn 1;\n}\n\n");
 
     fclose( p_c_file );

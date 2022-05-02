@@ -35,7 +35,7 @@ void close_file() {
 
 int main( int argc, char *argv[] ) {
 
-    int32_t file = open( "F101.GNX", O_RDWR );
+    int32_t file = open( "/home/takala/game/F101.GNX", O_RDWR );
     if( file == -1 ) {
         printf("File can't be opned.\n" );
         perror("error");
