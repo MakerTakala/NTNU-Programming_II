@@ -14,7 +14,7 @@
 
 
 bool if_file = false, if_struct_name = false, if_output_name = false;
-char file_name[256] = {0}, struct_name[256] = {0}, output_name[256] = {0};
+char file_name[256] = {0}, struct_name[256] = {0}, output_name[256] = {0}, lower_func_name[256] = {0};
 
 void read_option( int argc, char *argv[] ) {
     char c = 0;
@@ -28,6 +28,10 @@ void read_option( int argc, char *argv[] ) {
                 if_struct_name = true;
                 memset( struct_name, 0, 256 );
                 strcpy( struct_name, optarg );
+                memset( lower_func_name, 0, 256 );
+                for( int i = 0; i < strlen( struct_name ); i++ ) {
+                    lower_func_name[i] = tolower(struct_name[i]);
+                }
                 break;
             case 'p':
                 if_output_name = true;
@@ -64,6 +68,7 @@ uint64_t util_getFdSize( int fd )
 int main( int argc, char *argv[] ) {
     strcpy( struct_name, "Test" );
     strcpy( output_name, "test" );
+    strcpy( lower_func_name, "test" );
 
     read_option( argc, argv );
 
@@ -104,7 +109,6 @@ int main( int argc, char *argv[] ) {
         else {
             member_size[member_index] = ( strlen(cur_member_name) + 1 ) / 2;
             strcpy( member_name[member_index], tmp_cur_member_name );
-            printf("%s: %d\n", member_name[member_index], member_size[member_index]);
             member_index++;
         }
     }
@@ -126,17 +130,18 @@ int main( int argc, char *argv[] ) {
             fprintf( p_h_file, "\tuint%d_t %s;\n", member_size[i], member_name[i] );
         }
     }
-    fprintf( p_h_file, "}__attribute__((packed)) %s;\n\nIPH * iph_init( void );\nvoid iph_free( IPH * );\nint iph_encode( void *, const IPH * );\nint iph_decode( const void *, IPH * );", struct_name );
+    fprintf( p_h_file, "}__attribute__((packed)) %s;\n\n%s * %s_init( void );\nvoid %s_free( %s * );\nint %s_encode( void *, const %s * );\nint %s_decode( const void *, %s * );", \
+    struct_name , struct_name, lower_func_name, lower_func_name, struct_name, lower_func_name , struct_name, lower_func_name, struct_name);
     fclose( p_h_file );
 
     char tmp_c_output_name[256];
     strcpy( tmp_c_output_name, output_name );
     FILE *p_c_file = open_file( strcat( tmp_c_output_name, ".c"), "w" );
     fprintf( p_c_file, "#include <stdint.h>\n#include <stdlib.h>\n#include \"%s.h\"\n\n", output_name );
-    fprintf( p_c_file, "IPH * iph_init( void ){\n\treturn malloc( sizeof(%s) );\n}\n\n", struct_name );
-    fprintf( p_c_file, "void iph_free( IPH * this){\n\tfree(this);\n\treturn;\n}\n\n" );
+    fprintf( p_c_file, "%s * %s_init( void ){\n\treturn calloc( sizeof(%s), 1 );\n}\n\n", struct_name, lower_func_name, struct_name );
+    fprintf( p_c_file, "void %s_free( %s *this){\n\tfree(this);\n\treturn;\n}\n\n", lower_func_name, struct_name );
 
-    fprintf( p_c_file, "int iph_encode( void *buffer, const %s *this ){\n", struct_name );
+    fprintf( p_c_file, "int %s_encode( void *buffer, const %s *this ){\n", lower_func_name, struct_name );
     fprintf( p_c_file, "\tif(!buffer||!this) {\n\t\treturn 0;\n\t}\n");
     uint64_t buffer_index = 0, struct_index = 0;
     for( int i = 0; i < member_index; i++ ) {
@@ -145,7 +150,7 @@ int main( int argc, char *argv[] ) {
                 if( buffer_index % 8 == 0 ) {
                     fprintf( p_c_file, "\t*((uint8_t*)buffer+%lu) = 0;\n", buffer_index / 8 );
                 }
-                fprintf( p_c_file, "\t*((uint8_t*)buffer+%lu) |= ((((uint8_t)1<<%d)&(*((uint8_t*)this + %lu)))&1)<<%lu;\n", buffer_index / 8, k, struct_index, 7 - buffer_index % 8 );
+                fprintf( p_c_file, "\t*((uint8_t*)buffer+%lu) += ((((uint8_t)1<<%d)&(*((uint8_t*)this + %lu)))!=0)<<%lu;\n", buffer_index / 8, k, struct_index, 7 - buffer_index % 8 );
                 buffer_index++;
             }
             struct_index++;
@@ -153,14 +158,14 @@ int main( int argc, char *argv[] ) {
     }
     fprintf( p_c_file, "\treturn 1;\n}\n\n");
 
-    fprintf( p_c_file, "int iph_decode( const void *buffer, %s *this ){\n", struct_name );
+    fprintf( p_c_file, "int %s_decode( const void *buffer, %s *this ){\n", lower_func_name, struct_name );
     fprintf( p_c_file, "\tif(!buffer||!this) {\n\t\treturn 0;\n\t}\n");
     buffer_index = 0, struct_index = 0;
     for( int i = 0 ; i < member_index; i++ ) {
         for( int j = member_size[i]; j > 0; j -= 8 ) {
             fprintf( p_c_file, "\t*((uint8_t*)this+%lu) = 0;\n", struct_index );
             for( int k = 0 ; k < ( j >= 8 ? 8 : j ) ; k++ ) {
-                fprintf( p_c_file, "\t*((uint8_t*)this+%lu) |= ((((uint8_t)1<<%lu)&(*((uint8_t*)buffer + %lu)))&1)<<%d;\n", struct_index, 7 - buffer_index % 8, buffer_index / 8, k );
+                fprintf( p_c_file, "\t*((uint8_t*)this+%lu) += ((((uint8_t)1<<%lu)&(*((uint8_t*)buffer + %lu)))!=0)<<%d;\n", struct_index, 7 - buffer_index % 8, buffer_index / 8, k );
                 buffer_index++;
             }
             struct_index++;
