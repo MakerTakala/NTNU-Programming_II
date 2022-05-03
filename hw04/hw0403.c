@@ -71,6 +71,10 @@ bool compare( uint16_t type, uint32_t keyword_len, char cur_word[] ) {
 
 int main( int argc, char *argv[] ) {
     language_name[0] = 'C';
+    if( argc == 1 ) {
+        printf( "Need a file arg.\n" );
+        exit(0);
+    }
 
     int32_t fd = open( argv[argc - 1], O_RDONLY );
     if( fd == -1 ) {
