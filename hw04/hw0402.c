@@ -118,16 +118,11 @@ int main( int argc, char *argv[] ) {
     FILE *p_h_file = open_file( strcat( tmp_h_output_name, ".h"), "w" );
     fprintf( p_h_file, "#pragma once\n\n#include <stdint.h>\n\ntypedef struct _s%s\n{\n", struct_name );
     for( int i = 0; i < member_index; i++ ) {
-        if( member_size[i] != 8 && member_size[i] != 16 && member_size[i] != 32 && member_size[i] !=64 ) {
-            if( member_size[i] % 8 == 0) fprintf( p_h_file, "\tuint8_t %s[%d];\n", member_name[i], (member_size[i] - 1) / 8 + 1 );
-            else if( member_size[i] <= 8 ) fprintf( p_h_file, "\tuint8_t %s;\n", member_name[i] );
-            else if( member_size[i] <= 16 ) fprintf( p_h_file, "\tuint16_t %s;\n", member_name[i] );
-            else if( member_size[i] <= 32 ) fprintf( p_h_file, "\tuint32_t %s;\n", member_name[i] );
-            else if( member_size[i] <= 64 ) fprintf( p_h_file, "\tuint64_t %s;\n", member_name[i] );
-            else fprintf( p_h_file, "\tuint8_t %s[%d];\n", member_name[i], member_size[i] / 8 + 1 );
+        if( ( ( (member_size[i] - 1) / 8 + 1 ) * 8) != 8 && ( ( (member_size[i] - 1) / 8 + 1 ) * 8) != 16 && ( ( (member_size[i] - 1) / 8 + 1 ) * 8) != 32 ) {
+            fprintf( p_h_file, "\tuint8_t %s[%d];\n", member_name[i], (member_size[i] - 1) / 8 + 1 );
         }
         else {
-            fprintf( p_h_file, "\tuint%d_t %s;\n", member_size[i], member_name[i] );
+            fprintf( p_h_file, "\tuint%d_t %s;\n", ( (member_size[i] - 1) / 8 + 1 ) * 8, member_name[i] );
         }
     }
     fprintf( p_h_file, "}__attribute__((packed)) %s;\n\n%s * %s_init( void );\nvoid %s_free( %s * );\nint %s_encode( void *, const %s * );\nint %s_decode( const void *, %s * );", \

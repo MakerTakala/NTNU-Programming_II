@@ -117,7 +117,7 @@ int main( int argc, char *argv[] ) {
         if( word_size == 0 ) {
             printf("%c", *(p_file + offset) );
             if( *(p_file + offset) == '\n' ) {
-                printf( "%4lu ", line_num++ );
+                if( linenum ) printf( "%4lu ", line_num++ );
                 one_line_annotation = false;
             }
             if( !strncmp( p_file + offset, "//", 2 ) && !quotation  ) {
