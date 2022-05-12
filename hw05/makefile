@@ -2,6 +2,7 @@ SRC = $(wildcard *.c)
 
 all:$(SRC:.c=.o)
 	-gcc hw0501.o file_processing.o -o hw0501
+	-gcc hw0502.o file_processing.o -o hw0502
 	make clean
 
 .PHONY : new zip clean cleanexe
