@@ -15,6 +15,20 @@ char base64[64] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012345678
 bool encode = false, decode = false, output = false;
 char processing_file_name[4097] = {0}, output_file_name[4097] = {0};
 
+uint8_t searching( char base ) {
+    if( base == '=' ) {
+        return 64;
+    }
+    for( int i = 0; i < 64; i++ ) {
+        if( base == base64[i] ) {
+            return i;
+        }
+    }
+    printf( "Wrong decoding file!\n" );
+    exit(0);
+    return 0;
+}
+
 void read_option( int argc, char *argv[] ) {
     int l = 0;
     struct option long_options[] = {
@@ -69,8 +83,9 @@ int main( int argc, char *argv[] ) {
     if( encode ) {  
         uint8_t input_data[3] = {0};
         uint8_t output_data[4] = {0};
-        char char_output_data[4] = {0};
         for( int i = 0; i < st.st_size / 3; i++ ) {
+            memset( input_data, 0, 3 );
+            memset( output_data, 0, 4 );
             fread( &input_data, sizeof(uint8_t), 3, processing_file );
             output_data[0] += ( input_data[0] & 0b11111100 ) >> 2;
             output_data[1] += ( input_data[0] & 0b00000011 ) << 4;
@@ -78,43 +93,71 @@ int main( int argc, char *argv[] ) {
             output_data[2] += ( input_data[1] & 0b00001111 ) << 2;
             output_data[2] += ( input_data[2] & 0b11000000 ) >> 6;
             output_data[3] += ( input_data[2] & 0b00111111 ) << 0;
-            
             for( int j = 0; j < 4; j++ ) {
-                char_output_data[j] = base64[output_data[j]];
+                output_data[j] = base64[output_data[j]];
             }
-            fwrite( &char_output_data, sizeof(char), 4, output_file );
+            fwrite( &output_data, sizeof(char), 4, output_file );
         }
-        fread( &input_data, sizeof(uint8_t), st.st_size % 3, processing_file );
-        memset( char_output_data, '=', 4 );
+        memset( input_data, 0, 3 );
+        memset( output_data, 0, 4 );
         if( st.st_size % 3 == 1 ) {
+            fread( &input_data, sizeof(uint8_t), 1, processing_file );
             output_data[0] += ( input_data[0] & 0b11111100 ) >> 2;
             output_data[1] += ( input_data[0] & 0b00000011 ) << 4;
-            char_output_data[0] = base64[output_data[0]];
-            char_output_data[1] = base64[output_data[1]];
+            output_data[0] = base64[output_data[0]];
+            output_data[1] = base64[output_data[1]];
+            output_data[2] = '=';
+            output_data[3] = '=';
         }
         if( st.st_size % 3 == 2 ) {
+            fread( &input_data, sizeof(uint8_t), 2, processing_file );
             output_data[0] += ( input_data[0] & 0b11111100 ) >> 2;
             output_data[1] += ( input_data[0] & 0b00000011 ) << 4;
             output_data[1] += ( input_data[1] & 0b11110000 ) >> 4;
             output_data[2] += ( input_data[1] & 0b00001111 ) << 2;
-            char_output_data[0] = base64[output_data[0]];
-            char_output_data[1] = base64[output_data[1]];
-            char_output_data[3] = base64[output_data[3]];
+            output_data[0] = base64[output_data[0]];
+            output_data[1] = base64[output_data[1]];
+            output_data[2] = base64[output_data[2]];
+            output_data[3] = '=';
         }
-        fwrite( &char_output_data, sizeof(char), 4, output_file );
+        fwrite( &output_data, sizeof(char), 4, output_file );
     }
 
     if( decode ) {
-        for( int i = 0; i < st.st_size; i++ ) {
-            
+        uint8_t input_data[4] = {0};
+        uint8_t output_data[3] = {0};
+        for( int i = 0; i < st.st_size / 4; i++ ) {
+            memset( input_data, 0, 4 );
+            memset( output_data, 0, 3 );
+            fread( &input_data, sizeof(uint8_t), 4, processing_file );
+            for( int j = 0; j < 4; j++ ) {
+                input_data[j] = searching( input_data[j] );
+            }
+
+            if( input_data[3] != 64 ) {
+                output_data[0] += (input_data[0] & 0b00111111) << 2;
+                output_data[0] += (input_data[1] & 0b00110000) >> 4;
+                output_data[1] += (input_data[1] & 0b00001111) << 4;
+                output_data[1] += (input_data[2] & 0b00111100) >> 2;
+                output_data[2] += (input_data[2] & 0b00000011) << 6;
+                output_data[2] += (input_data[3] & 0b00111111) << 0;
+                fwrite( &output_data, sizeof(uint8_t), 3, output_file );
+            }
+            else if( input_data[2] != 64 ) {
+                output_data[0] += (input_data[0] & 0b00111111) << 2;
+                output_data[0] += (input_data[1] & 0b00110000) >> 4;
+                output_data[1] += (input_data[1] & 0b00001111) << 4;
+                output_data[1] += (input_data[2] & 0b00111100) >> 2;
+                fwrite( &output_data, sizeof(uint8_t), 2, output_file );
+            }
+            else {
+                output_data[0] += (input_data[0] & 0b00111111) << 2;
+                output_data[0] += (input_data[1] & 0b00110000) >> 4;
+                fwrite( &output_data, sizeof(uint8_t), 1, output_file );
+            }
         }
     }
 
-
-
-
-
-    
     fclose( processing_file );
     fclose( output_file );
     return 0;
