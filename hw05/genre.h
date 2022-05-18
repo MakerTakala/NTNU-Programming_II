@@ -1,4 +1,4 @@
-char genre_name[126][40] = {
+char genre_name[126][30] = {
 "Blues",
 "Classic Rock",
 "Country",
