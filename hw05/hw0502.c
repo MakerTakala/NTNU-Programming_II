@@ -229,7 +229,7 @@ int main( int argc, char *argv[] ) {
     FILE *new_file[10] = {NULL};
     for( int i = 0; i < count_file; i++ ) {
         memset( &ID3_data[i], 0, sizeof( ID3v1 ) );
-        ID3_data->genre = 126;
+        ID3_data->genre = 255;
         strcpy( tmp_file_name[i], file_name[i] );
         strcat( tmp_file_name[i], ".tmp" );
         new_file[i] = open_file( tmp_file_name[i], "w" );
@@ -269,7 +269,7 @@ int main( int argc, char *argv[] ) {
             else {
                 printf( "  Title: " );
                 if( ID3_data[i].title[0] == 0 ) {
-                    printf( "NULL" );
+                    printf( "None" );
                 }
                 else {
                     for( int j = 0; j < 30; j++ ) {
@@ -279,7 +279,7 @@ int main( int argc, char *argv[] ) {
 
                 printf( "\n  Artist: " );
                 if( ID3_data[i].artist[0] == 0 ) {
-                    printf( "NULL" );
+                    printf( "None" );
                 }
                 else {
                     for( int j = 0; j < 30; j++ ) {
@@ -289,7 +289,7 @@ int main( int argc, char *argv[] ) {
 
                 printf( "\n  Album: ");
                 if( ID3_data[i].album[0] == 0 ) {
-                    printf( "NULL" );
+                    printf( "None" );
                 }
                 else {
                     for( int j = 0; j < 30; j++ ) {
@@ -298,15 +298,15 @@ int main( int argc, char *argv[] ) {
                 }
                 printf( "\n  Year: " );
                 if( ID3_data[i].year[0] == 0 ) {
-                    printf( "NULL" );
+                    printf( "None" );
                 }
                 else {
                     for( int j = 0; j < 4; j++ ) {
                         printf( "%c", ID3_data[i].year[j] );
                     }
                 }
-                if( ID3_data[i].genre == 126  ) {
-                    printf( "\n  Genre: NULL\n" );
+                if( ID3_data[i].genre == 255  ) {
+                    printf( "\n  Genre: None (255)\n" );
                 }
                 else {
                     printf( "\n  Genre: %s (%hhu)\n", genre_name[ID3_data[i].genre], ID3_data[i].genre );
@@ -315,7 +315,7 @@ int main( int argc, char *argv[] ) {
                 printf( "  Comment: " );
                 if( ID3_data->byte0 == 0 ) {
                     if( ID3_data[i].comment[0] == 0 ) {
-                        printf( "NULL" );
+                        printf( "None" );
                     }
                     else {
                         for( int j = 0; j < 28; j++ ) {

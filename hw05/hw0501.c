@@ -9,8 +9,8 @@
 
 #include "file_processing.h"
 
-bool byte = false, mega = false, kilo = false, seconds = false, count = false;
-int DataSizeType = 1, EveryNSecond = 1, CountNTimes = 1;
+bool seconds = false, count = false;
+int DataSizeType = 1, EveryNSecond = 0, CountNTimes = 1;
 
 void read_option( int argc, char *argv[] ) {
     int l = 0;
@@ -27,7 +27,7 @@ void read_option( int argc, char *argv[] ) {
     while( ( c = getopt_long( argc, argv, "bs:c:", long_options, NULL ) ) != -1 ) {
         switch ( c ) {
             case 'b':
-                byte = true;
+                DataSizeType = 0;
                 break;
             case 's':
                 seconds = true;
@@ -37,8 +37,11 @@ void read_option( int argc, char *argv[] ) {
                         exit(0);
                     }
                 }
-                
                 EveryNSecond = strtol(optarg, NULL, 10);
+                if( EveryNSecond == 0 ) {
+                    printf( "Wrong option!\n" );
+                    exit(0);
+                }
                 break;
             case 'c':
                 count = true;
@@ -52,10 +55,10 @@ void read_option( int argc, char *argv[] ) {
             case 0:
                 switch ( l ) {
                     case 1:
-                        kilo = true;
+                        DataSizeType = 1;
                         break;
                     case 2:
-                        mega = true;
+                        DataSizeType = 2;
                         break;
                     case 3:
                         printf( "Usage:\n" );
@@ -82,25 +85,9 @@ void read_option( int argc, char *argv[] ) {
 
 int main( int argc, char *argv[] ) {
     read_option( argc, argv );
-    
-    if( ( byte && !kilo && !mega ) || ( !byte && kilo && !mega ) || ( !byte && !kilo && mega ) ) {
-        printf( "Wrong Opiton!\n" );
-        exit(0);
-    }
-    if( byte ) {
-        DataSizeType = 0;
-    }
-    if( kilo ) {
-        DataSizeType = 1;
-    }
-    if ( mega ) {
-        DataSizeType = 2;
-    }
-
     uint64_t AvailableSize = 0;
     FILE *file = open_file( "/proc/meminfo", "r" );
-    
-    for( int i = 0 ; i < CountNTimes; i++ ) {
+    for( int i = 0 ; i < CountNTimes; i = (seconds && !count) ? i : i + 1 ) {
         for( int i = 0;i < 3; i++ ) {
             fscanf( file, "%*[^0-9]%lu kB\n", &AvailableSize );
         }
@@ -116,7 +103,7 @@ int main( int argc, char *argv[] ) {
                 printf( "%lu MB\n", AvailableSize / 1024 );
                 break;
         }
-        if( i != CountNTimes - 1 ) {
+        if( i != CountNTimes - 1 || (seconds && !count) ) {
             sleep( EveryNSecond );
             rewind( file );
         }
