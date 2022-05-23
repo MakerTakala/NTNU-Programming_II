@@ -53,10 +53,10 @@ int main() {
                 *tone = '2';
             break;
             case '4':
-                if( word[i][strlen(word[i]) - 2] == 'p' || word[i][strlen(word[i]) - 1] == 't' || word[i][strlen(word[i]) - 1] == 'k' ) {
+                if( word[i][strlen(word[i]) - 2] == 'p' || word[i][strlen(word[i]) - 2] == 't' || word[i][strlen(word[i]) - 2] == 'k' ) {
                     *tone = '8';
                 }
-                if( word[i][strlen(word[i]) - 1] == 'h' ){
+                if( word[i][strlen(word[i]) - 2] == 'h' ){
                     *tone = '2';
                 }
             break;
@@ -67,10 +67,10 @@ int main() {
                 *tone = '3';
             break;
             case '8':
-                if( word[i][strlen(word[i]) - 2] == 'p' || word[i][strlen(word[i]) - 1] == 't' || word[i][strlen(word[i]) - 1] == 'k' ) {
+                if( word[i][strlen(word[i]) - 2] == 'p' || word[i][strlen(word[i]) - 2] == 't' || word[i][strlen(word[i]) - 2] == 'k' ) {
                     *tone = '4';
                 }
-                if( word[i][strlen(word[i]) - 1] == 'h' ){
+                if( word[i][strlen(word[i]) - 2] == 'h' ){
                     *tone = '3';
                 }
             break;
@@ -89,11 +89,11 @@ int main() {
     }
 
     char command[300] = {0};
-    sprintf( command, "%s%s %s", "wget https://hapsing.ithuan.tw/bangtsam?taibun=", str, "-O ./file0.wav");
+    sprintf( command, "wget https://hapsing.ithuan.tw/bangtsam?taibun=%s -O ./file0.wav", str);
     system( command );
     for( int i = 0; i < word_count; i++ ) {
         memset( command, 0, 300 );
-        sprintf( command, "%s%s %s%d%s", "wget https://hapsing.ithuan.tw/bangtsam?taibun=", word[i], "-O ./file", i + 1, ".wav" );
+        sprintf( command, "wget https://hapsing.ithuan.tw/bangtsam?taibun=%s. -O ./file%d.wav", word[i], i + 1 );
         system( command );
     }
    
