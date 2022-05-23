@@ -57,7 +57,8 @@ int main() {
                     *tone = '8';
                 }
                 if( word[i][strlen(word[i]) - 2] == 'h' ){
-                    *tone = '2';
+                    word[i][strlen(word[i]) - 2] = '2';
+                    word[i][strlen(word[i]) - 1] = 0;
                 }
             break;
             case '5':
@@ -71,7 +72,8 @@ int main() {
                     *tone = '4';
                 }
                 if( word[i][strlen(word[i]) - 2] == 'h' ){
-                    *tone = '3';
+                    word[i][strlen(word[i]) - 2] = '3';
+                    word[i][strlen(word[i]) - 1] = 0;
                 }
             break;
         }
@@ -89,11 +91,11 @@ int main() {
     }
 
     char command[300] = {0};
-    sprintf( command, "wget https://hapsing.ithuan.tw/bangtsam?taibun=%s -O ./file0.wav", str);
+    sprintf( command, "wget -q https://hapsing.ithuan.tw/bangtsam?taibun=%s -O ./file0.wav", str);
     system( command );
     for( int i = 0; i < word_count; i++ ) {
         memset( command, 0, 300 );
-        sprintf( command, "wget https://hapsing.ithuan.tw/bangtsam?taibun=%s. -O ./file%d.wav", word[i], i + 1 );
+        sprintf( command, "wget -q https://hapsing.ithuan.tw/bangtsam?taibun=%s. -O ./file%d.wav", word[i], i + 1 );
         system( command );
     }
    
@@ -132,5 +134,6 @@ int main() {
         system( command );
     }
     fclose( output );
+    printf( "out.wav has been generated.\n" );
     return 0;
 }
