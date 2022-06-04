@@ -36,19 +36,19 @@ char* read_string_input( char ask[] ) {
     return input;
 }
 
-sBmpHeader* BMP_header_init() {
+sBmpHeader* BMP_header_init( int64_t width, int64_t height ) {
     sBmpHeader *header = calloc( sizeof(sBmpHeader), 1 );
     header->bm[0] = 'B';
     header->bm[1] = 'M';
-    header->size = 54 + 1024 * 768 * 3;
+    header->size = 54 + width * height* 3;
     header->offset = 54;
     header->header_size = 40;
-    header->width = 768;
-    header->height = 1024;
+    header->width = width;
+    header->height = height;
     header->planes = 1;
     header->bpp = 24;
     header->compression = 0;
-    header->bitmap_size = 1024 * 768 * 3;
+    header->bitmap_size = height * width * 3;
     header->hres = 25000;
     header->vres = 25000;
     header->used = 0;
