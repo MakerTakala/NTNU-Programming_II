@@ -14,7 +14,7 @@ char output_file_name[4098] = "output.bmp";
 void read_option( int argc, char *argv[] ) {
     int l = 0;
     struct option long_options[] = {
-        { "heip", 0, NULL, 'l' }, 
+        { "help", 0, NULL, 'l' }, 
         { 0, 0, 0, 0 }
     };
     char c = 0;
@@ -25,7 +25,7 @@ void read_option( int argc, char *argv[] ) {
                     if( !isdigit(optarg[i]) )
                         exit_program( "Wrong Option arg!" );
                 width = strtoll( optarg, NULL, 10 );
-                if( width < 0 )
+                if( width < 0 || 2000 < width )
                     exit_program( "Wrong Option arg!" );
                 break;
             case 'h':
@@ -33,11 +33,20 @@ void read_option( int argc, char *argv[] ) {
                     if( !isdigit(optarg[i]) )
                         exit_program( "Wrong Option arg!" );
                 height = strtoll( optarg, NULL, 10 );
-                if( height < 0 )
+                if( height < 0 || 2000 < height )
                     exit_program( "Wrong Option arg!" );
                 break;
             case 'o':
                 strncpy( output_file_name, optarg, 4096 );
+                break;
+            case 'l':
+                printf( "Usage:\n" );
+                printf( "\t./fin01 [options]\n" );
+                printf( "\t-w: the width of the output figure. (Default: 1024)\n" );
+                printf( "\t-h: the height of the output figure. (Default: 768)\n" );
+                printf( "\t-o: the output file name. (Default: output.bmp)\n" );
+                printf( "--help: this message\n" );
+                exit(0);
                 break;
         }
     }
@@ -46,12 +55,10 @@ void read_option( int argc, char *argv[] ) {
 
 void read_input( char* input, int64_t data[3] ) {
     int n = strlen(input);
-    for( int i = 0, count = 0; i < n; i++ ) {
+    for( int i = 0; i < n; i++ ) {
         if( !isdigit(input[i]) && input[i] != ',' ) 
             exit_program( "Wrong Input" );
-        if( input[i] == ',' && ( i == 0 || !isdigit(input[i + 1]) ) ) 
-            exit_program( "Wrong Input" );
-        if( count > 2 ) 
+        if( input[i] == ',' && ( i == 0 || !isdigit(input[i + 1]) ) )
             exit_program( "Wrong Input" );
     }
     sscanf( input, "%ld,%ld,%ld", &data[2], &data[1], &data[0] );
@@ -61,17 +68,16 @@ void read_input( char* input, int64_t data[3] ) {
     return;
 }
 
-int main() {
-
-    char *read_tl = read_string_input( "Please enter (R,G,B) in the top left pixel:" );
-    char *read_tr = read_string_input( "Please enter (R,G,B) in the top right pixel:" );
-    char *read_bl = read_string_input( "Please enter (R,G,B) in the bottom left pixel:" );
-    char *read_br = read_string_input( "Please enter (R,G,B) in the bottom right pixel:" );
-
+int main( int argc, char *argv[] ) {
+    read_option( argc, argv );
     int64_t tl_data[3] = {0}, tr_data[3] = {0}, bl_data[3] = {0}, br_data[3] = {0};
+    char *read_tl = read_string_input( "Please enter (R,G,B) in the top left pixel:" );
     read_input( read_tl, tl_data );
+    char *read_tr = read_string_input( "Please enter (R,G,B) in the top right pixel:" );
     read_input( read_tr, tr_data );
+    char *read_bl = read_string_input( "Please enter (R,G,B) in the bottom left pixel:" );
     read_input( read_bl, bl_data );
+    char *read_br = read_string_input( "Please enter (R,G,B) in the bottom right pixel:" );
     read_input( read_br, br_data );
     
     FILE *file = open_file( output_file_name, "w" );
